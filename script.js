@@ -1,4 +1,4 @@
-fetch("data.json")
+fetch("https://unique-studio.github.io/WEB/data.json")
 .then(res => res.json())
 .then(data => {
 
