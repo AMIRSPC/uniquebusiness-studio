@@ -3,119 +3,166 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UNIQUE WEB</title>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<title>UNIQUE WEB STUDIO</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f5f0e6;color:#333}
-
-/* HEADER */
-header{
-position:fixed;top:0;width:100%;
-background:rgba(255,255,255,0.9);
-display:flex;justify-content:space-between;
-padding:15px 20px;z-index:1000;
+body{
+margin:0;
+font-family:sans-serif;
+background:#f5f0e6;
+color:#3e2f1c;
 }
 
-.menu a{margin:0 10px;text-decoration:none;color:#333}
+section{padding:80px 20px;text-align:center}
 
-/* HERO */
-.hero{
-padding:120px 20px 60px;
-text-align:center;
-}
+h1,h2{color:#5a3e1b}
+
 .btn{
-background:#c8a96a;color:white;
-padding:12px 25px;border-radius:30px;
-display:inline-block;margin-top:20px;
-}
-
-/* SECTION */
-.section{padding:60px 20px;text-align:center}
-
-/* LEGAL */
-.legal{
-max-width:800px;
-margin:auto;
-text-align:left;
-background:white;
-padding:20px;
-border-radius:10px;
-}
-
-/* SOCIAL */
-.social a{
-margin:10px;
-font-size:24px;
-}
-
-/* CHAT BTN */
-.chat{
-position:fixed;
-bottom:20px;
-right:20px;
 background:#c8a96a;
 color:white;
-padding:15px;
-border-radius:50%;
+padding:12px 25px;
+border-radius:30px;
+display:inline-block;
+margin:10px;
+text-decoration:none;
+}
+
+.grid{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.card{
+width:250px;
+margin:10px;
+background:white;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.card img{
+width:100%;
+height:150px;
+object-fit:cover;
+}
+
+.stats{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+}
+
+.stat{
+margin:20px;
+font-size:20px;
 }
 </style>
+
 </head>
 
 <body>
 
-<header>
-<div><b>UNIQUE WEB</b></div>
-<div class="menu">
-<a href="#">Главная</a>
-<a href="#contact">Контакты</a>
-<a href="#legal">Документы</a>
-</div>
-</header>
+<!-- HERO -->
+<section>
+<h1>Web Design / Создание сайтов</h1>
 
-<section class="hero">
-<h1>Создание сайтов для бизнеса</h1>
-<p>Быстро и профессионально</p>
-<a href="#contact" class="btn">Связаться</a>
+<p>
+Система автоматического создания сайтов.  
+Быстро, современно и без лишних сложностей.
+</p>
+
+<a href="#" class="btn">Получить демо сайт</a>
+<a href="#" class="btn">Оставить заявку</a>
 </section>
 
-<section id="contact" class="section">
+<!-- SERVICES -->
+<section>
+<h2>Услуги</h2>
+
+<div class="grid">
+<div class="card">
+<p>Landing Page</p>
+<p>от 6000₽</p>
+</div>
+
+<div class="card">
+<p>Online Shop</p>
+<p>от 6000₽</p>
+</div>
+
+<div class="card">
+<p>Business Website</p>
+<p>от 6000₽</p>
+</div>
+</div>
+</section>
+
+<!-- PORTFOLIO -->
+<section>
+<h2>Наши проекты</h2>
+
+<div class="grid">
+
+<div class="card">
+<img src="https://picsum.photos/300/200?1">
+<p>Online Store</p>
+</div>
+
+<div class="card">
+<img src="https://picsum.photos/300/200?2">
+<p>Restaurant</p>
+</div>
+
+<div class="card">
+<img src="https://picsum.photos/300/200?3">
+<p>Business Website</p>
+</div>
+
+<div class="card">
+<img src="https://picsum.photos/300/200?4">
+<p>Shop Landing</p>
+</div>
+
+<div class="card">
+<img src="https://picsum.photos/300/200?5">
+<p>Personal Brand</p>
+</div>
+
+<div class="card">
+<img src="https://picsum.photos/300/200?6">
+<p>Service Company</p>
+</div>
+
+</div>
+</section>
+
+<!-- STATS -->
+<section>
+<h2>Наш опыт</h2>
+
+<div class="stats">
+<div class="stat">50+ проектов</div>
+<div class="stat">95% довольных клиентов</div>
+<div class="stat">7-й год работы</div>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section>
 <h2>Контакты</h2>
+
 <p>Email: uniqe.studio@yandex.com</p>
 
-<div class="social">
-<a href="https://t.me/UNIQE_WEB_STUDIO" target="_blank"><i class="fab fa-telegram"></i></a>
-<a href="https://wa.me/79651776233" target="_blank"><i class="fab fa-whatsapp"></i></a>
-<a href="https://vk.ru/unique__business" target="_blank"><i class="fab fa-vk"></i></a>
-</div>
-</section>
-
-<section id="legal" class="section">
-<h2>Документы</h2>
-
-<div class="legal">
-<h3>Пользовательское соглашение</h3>
-<p>Используя данный сайт, пользователь соглашается с условиями оказания услуг.</p>
-
-<h3>Политика возврата</h3>
-<p>Пользователь имеет право подать жалобу на оказанную услугу.</p>
-
-<p>Для подачи жалобы необходимо написать на email: uniqe.studio@yandex.com</p>
-
-<p>Срок рассмотрения жалобы: до 3 рабочих дней.</p>
-
-<p>Возврат средств возможен при обоснованной претензии.</p>
-
-<h3>Контакты поддержки</h3>
-<p>Email: uniqe.studio@yandex.com</p>
-</div>
+<p>
+<a href="https://t.me/UNIQE_WEB_STUDIO">Telegram</a> |
+<a href="https://wa.me/79651776233">WhatsApp</a> |
+<a href="https://vk.ru/unique__business">VK</a>
+</p>
 
 </section>
-
-<div class="chat">
-<i class="fas fa-comment"></i>
-</div>
 
 </body>
 </html>
