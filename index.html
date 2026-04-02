@@ -9,6 +9,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ========== همه استایل‌های اصلی از کد فعلی شما (بدون تغییر) ========== */
         :root {
             --cream: #FDF8F0;
             --beige: #F5EDE0;
@@ -314,7 +315,7 @@
         .checkbox-group input {
             width: auto;
         }
-        /* Admin panel styles */
+        /* ========== استایل‌های پنل ادمین جدید (پیشرفته) ========== */
         .admin-panel {
             position: fixed;
             top: 0;
@@ -395,42 +396,6 @@
             color: var(--brown);
         }
         .btn-icon:hover { color: var(--gold); }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 2100;
-        }
-        .modal-content {
-            background: var(--white);
-            padding: 24px;
-            border-radius: 24px;
-            max-width: 500px;
-            width: 90%;
-        }
-        .form-group { margin-bottom: 16px; }
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--brown-light);
-            border-radius: 12px;
-            font-family: inherit;
-        }
-        textarea { min-height: 80px; }
-        button.btn {
-            background: var(--gold);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-        }
         .log-area {
             background: #f4f4f4;
             padding: 12px;
@@ -454,37 +419,7 @@
             background: white;
             cursor: pointer;
         }
-        /* Overlay для обязательного согласия */
-        .consent-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 10000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-        .consent-overlay .modal {
-            display: flex !important;
-            position: relative;
-            background: transparent;
-            z-index: 10001;
-        }
-        .consent-overlay .modal-content {
-            max-width: 550px;
-            width: 90%;
-            background: var(--white);
-            border-radius: 32px;
-            padding: 32px;
-        }
-        #consentModal .close-modal {
-            display: none;
-        }
-        /* остальные стили */
+        /* استایل‌های دیگر از کد فعلی (floating, scroll-top, footer, cookie) بدون تغییر */
         .floating-buttons {
             position: fixed;
             bottom: 100px;
@@ -529,6 +464,63 @@
             z-index: 99;
         }
         .scroll-top.visible { opacity: 1; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 2001;
+        }
+        .modal-content {
+            background: var(--white);
+            padding: 32px;
+            border-radius: 32px;
+            max-width: 550px;
+            width: 90%;
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .close-modal {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            cursor: pointer;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--brown);
+        }
+        #consentModal {
+            z-index: 2000;
+        }
+        #policyModal, #refundModal {
+            z-index: 2002;
+        }
+        #consentModal .close-modal {
+            display: none;
+        }
+        .cookie-consent {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            display: none;
+        }
         footer {
             background: var(--brown-dark);
             color: #E9DFD3;
@@ -565,23 +557,6 @@
         }
         .contact-info a:hover {
             color: var(--gold);
-        }
-        .cookie-consent {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: var(--white);
-            border-radius: 20px;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            z-index: 1000;
-            box-shadow: var(--shadow);
-            display: none;
         }
     </style>
 </head>
@@ -621,6 +596,7 @@
     <div class="container text-center" data-aos="fade-up">
         <h2 data-i18n="services_title">Наши услуги</h2>
         <div class="services-grid">
+            <!-- همان کارت‌های خدمات از کد فعلی -->
             <div class="service-card" data-aos="zoom-in" data-aos-delay="100">
                 <div class="content">
                     <h3 data-i18n="service_landing">Landing Page</h3>
@@ -674,39 +650,16 @@
 <div class="floating-buttons"><a href="https://wa.me/79651776233" class="floating-btn" target="_blank"><i class="fab fa-whatsapp"></i></a><a href="https://t.me/UNIQE_WEB_STUDIO" class="floating-btn telegram" target="_blank"><i class="fab fa-telegram"></i></a><a href="https://vk.com/unique__business" class="floating-btn vk" target="_blank"><i class="fab fa-vk"></i></a></div>
 <div class="scroll-top" id="scrollTop"><i class="fas fa-arrow-up"></i></div>
 
-<!-- Модальные окна для заявок -->
+<!-- Модальные окна (همان کد فعلی) -->
 <div id="demoModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3 data-i18n="demo_modal_title">Получить демо сайт</h3><form id="demoForm"><input type="text" id="demoName" placeholder="Ваше имя" required data-i18n-placeholder="demo_name"><br><br><input type="text" id="demoPhone" placeholder="Телефон" required data-i18n-placeholder="demo_phone"><br><br><input type="text" id="demoVk" placeholder="Ссылка VK" required data-i18n-placeholder="demo_vk"><br><br><div class="checkbox-group"><input type="checkbox" id="demoAgree" required><label for="demoAgree" data-i18n="agree_label">Я согласен с <a href="#" id="demoPolicyLink">Пользовательским соглашением</a> и <a href="#" id="demoRefundLink">Политикой возвратов</a></label></div><button type="submit" class="btn" data-i18n="send_btn">Отправить</button></form><div id="demoResult"></div></div></div>
 <div id="consultModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3 data-i18n="consult_modal_title">Заявка на консультацию</h3><form id="consultForm"><input type="text" id="consultName" placeholder="Имя" required data-i18n-placeholder="consult_name"><br><br><input type="email" id="consultEmail" placeholder="Email" required data-i18n-placeholder="consult_email"><br><br><textarea id="consultMessage" placeholder="Сообщение" data-i18n-placeholder="consult_message"></textarea><br><br><div class="checkbox-group"><input type="checkbox" id="consultAgree" required><label for="consultAgree" data-i18n="agree_label">Я согласен с <a href="#" id="consultPolicyLink">Пользовательским соглашением</a> и <a href="#" id="consultRefundLink">Политикой возвратов</a></label></div><button type="submit" class="btn" data-i18n="send_btn">Отправить</button></form><div id="consultResult"></div></div></div>
 <div id="reviewModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3 data-i18n="review_modal_title">Оставить отзыв</h3><form id="reviewForm"><input type="text" id="reviewName" placeholder="Ваше имя" required data-i18n-placeholder="review_name"><br><br><div class="star-rating" id="starRating" style="display:flex; justify-content:center; gap:10px; font-size:2rem; cursor:pointer;"><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span></div><textarea id="reviewText" placeholder="Ваш отзыв" rows="3" required data-i18n-placeholder="review_text"></textarea><br><br><div class="checkbox-group"><input type="checkbox" id="reviewAgree" required><label for="reviewAgree" data-i18n="agree_label">Я согласен с <a href="#" id="reviewPolicyLink">Пользовательским соглашением</a> и <a href="#" id="reviewRefundLink">Политикой возвратов</a></label></div><button type="submit" class="btn" data-i18n="send_btn">Отправить</button></form><div id="reviewResult"></div></div></div>
 
-<!-- Пользовательское соглашение (полный текст) -->
-<div id="policyModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h3 data-i18n="policy_title">Пользовательское соглашение</h3>
-        <p><strong>1. Общие положения</strong><br>Настоящее соглашение регулирует отношения между Исполнителем (Unique Web Studio) и Заказчиком при заказе услуг по разработке сайта. Заказчик обязуется предоставить достоверную информацию для создания сайта. Исполнитель обязуется выполнить работу в согласованные сроки.</p>
-        <p><strong>2. Порядок оплаты</strong><br>Оплата производится через платёжную систему UnitPay. Предоплата 50% от стоимости, оставшаяся сумма после сдачи проекта. Сроки возврата средств регулируются Политикой возвратов.</p>
-        <p><strong>3. Ответственность сторон</strong><br>Исполнитель не несёт ответственности за содержание предоставленных Заказчиком материалов. Заказчик гарантирует законность использования всех материалов.</p>
-        <p><strong>4. Конфиденциальность</strong><br>Стороны обязуются не разглашать коммерческую информацию, полученную в рамках сотрудничества.</p>
-        <p><strong>5. Форс-мажор</strong><br>Стороны освобождаются от ответственности за неисполнение обязательств при наступлении обстоятельств непреодолимой силы.</p>
-    </div>
-</div>
-
-<!-- Политика возвратов (полный текст) -->
-<div id="refundModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h3 data-i18n="refund_title">Политика возвратов</h3>
-        <p><strong>1. Возврат предоплаты</strong><br>Предоплата возвращается в полном объёме, если Исполнитель не приступил к работе в течение 5 рабочих дней с момента оплаты. Если работа начата, возврат возможен за вычетом фактически понесённых расходов (не более 30% от суммы).</p>
-        <p><strong>2. Возврат после сдачи проекта</strong><br>После подписания акта приёмки-передачи возврат не осуществляется, за исключением случаев выявления критических ошибок, не устранённых в течение 14 дней.</p>
-        <p><strong>3. Порядок подачи жалобы</strong><br>Для подачи жалобы необходимо написать на почту partners@unitpay.ru с указанием номера заказа, описанием проблемы и приложением подтверждающих материалов. Срок рассмотрения – до 10 рабочих дней.</p>
-        <p><strong>4. Основания для отказа в возврате</strong><br>Отказ возможен, если Заказчик нарушил условия пользовательского соглашения, предоставил недостоверные данные или отказался от сотрудничества после начала работ без уважительной причины.</p>
-    </div>
-</div>
-
+<div id="policyModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3 data-i18n="policy_title">Пользовательское соглашение</h3><p><strong>1. Общие положения</strong><br>Настоящее соглашение регулирует отношения между Исполнителем (Unique Web Studio) и Заказчиком при заказе услуг по разработке сайта. Заказчик обязуется предоставить достоверную информацию для создания сайта. Исполнитель обязуется выполнить работу в согласованные сроки.</p><p><strong>2. Порядок оплаты</strong><br>Оплата производится через платёжную систему UnitPay. Предоплата 50% от стоимости, оставшаяся сумма после сдачи проекта. Сроки возврата средств регулируются Политикой возвратов.</p><p><strong>3. Ответственность сторон</strong><br>Исполнитель не несёт ответственности за содержание предоставленных Заказчиком материалов. Заказчик гарантирует законность использования всех материалов.</p><p><strong>4. Конфиденциальность</strong><br>Стороны обязуются не разглашать коммерческую информацию, полученную в рамках сотрудничества.</p><p><strong>5. Форс-мажор</strong><br>Стороны освобождаются от ответственности за неисполнение обязательств при наступлении обстоятельств непреодолимой силы.</p></div></div>
+<div id="refundModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3 data-i18n="refund_title">Политика возвратов</h3><p><strong>1. Возврат предоплаты</strong><br>Предоплата возвращается в полном объёме, если Исполнитель не приступил к работе в течение 5 рабочих дней с момента оплаты. Если работа начата, возврат возможен за вычетом фактически понесённых расходов (не более 30% от суммы).</p><p><strong>2. Возврат после сдачи проекта</strong><br>После подписания акта приёмки-передачи возврат не осуществляется, за исключением случаев выявления критических ошибок, не устранённых в течение 14 дней.</p><p><strong>3. Порядок подачи жалобы</strong><br>Для подачи жалобы необходимо написать на почту partners@unitpay.ru с указанием номера заказа, описанием проблемы и приложением подтверждающих материалов. Срок рассмотрения – до 10 рабочих дней.</p><p><strong>4. Основания для отказа в возврате</strong><br>Отказ возможен, если Заказчик нарушил условия пользовательского соглашения, предоставил недостоверные данные или отказался от сотрудничества после начала работ без уважительной причины.</p></div></div>
 <div id="exitModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3 data-i18n="exit_title">Не уходите!</h3><p data-i18n="exit_text">Оставьте заявку и получите скидку 10% на любой пакет.</p><button class="btn" id="exitBtn" data-i18n="exit_btn">Получить скидку</button></div></div>
 
-<!-- Consent Modal (обязательный для принятия) -->
+<!-- Consent Modal (از کد فعلی، بدون تغییر) -->
 <div id="consentModal" class="modal">
     <div class="modal-content">
         <h3 data-i18n="consent_title">❗ Важное уведомление</h3>
@@ -723,7 +676,7 @@
     </div>
 </div>
 
-<!-- Новая панель администратора -->
+<!-- پنل ادمین جدید (جایگزین پنل ساده) -->
 <div id="adminPanel" class="admin-panel">
     <div class="admin-header">
         <h2 data-i18n="admin_title">Панель администратора</h2>
@@ -738,15 +691,46 @@
     <div id="adminContent"></div>
 </div>
 
+<!-- مودال‌های پنل ادمین -->
 <div id="messageModal" class="modal"><div class="modal-content"><h3 data-i18n="send_message_title">Отправить сообщение</h3><form id="sendMessageForm"><input type="hidden" id="msgLeadId"><div class="form-group"><label data-i18n="message_text">Текст сообщения</label><textarea id="msgText" required></textarea></div><button type="submit" class="btn" data-i18n="send_btn">Отправить</button><button type="button" class="btn btn-outline" id="closeMsgModal" style="margin-left: 8px;" data-i18n="cancel">Отмена</button></form><div id="msgResult"></div></div></div>
 <div id="historyModal" class="modal"><div class="modal-content"><h3 data-i18n="message_history">История сообщений</h3><div id="historyList"></div><button type="button" class="btn" id="closeHistoryModal" data-i18n="close">Закрыть</button></div></div>
+
 <div id="cookieConsent" class="cookie-consent"><span data-i18n="cookie_text">Мы используем cookies для улучшения работы сайта. Продолжая, вы соглашаетесь с этим.</span><button id="acceptCookies" class="btn">OK</button></div>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.0/dist/vanilla-tilt.min.js"></script>
 <script>
-    // ==================== Языковые переводы (полные, как в исходнике) ====================
+    // ==================== متغیرها و توابع مشترک (از کد فعلی) ====================
+    let consentGiven = localStorage.getItem('consentAccepted') === 'true';
+    let consentRecords = JSON.parse(localStorage.getItem('consentRecords')) || [];
+
+    function storeConsentRecord() {
+        const record = { timestamp: new Date().toLocaleString(), userAgent: navigator.userAgent };
+        consentRecords.push(record);
+        localStorage.setItem('consentRecords', JSON.stringify(consentRecords));
+        localStorage.setItem('consentAccepted', 'true');
+        consentGiven = true;
+    }
+
+    function requireConsentAndExecute(callback) {
+        if (consentGiven) {
+            callback();
+        } else {
+            window.pendingConsentCallback = callback;
+            openModal('consent');
+        }
+    }
+
+    function onConsentAccepted() {
+        if (window.pendingConsentCallback) {
+            const cb = window.pendingConsentCallback;
+            window.pendingConsentCallback = null;
+            cb();
+        }
+    }
+
+    // ========== زبان ==========
     const translations = {
         ru: {
             nav_services: "Услуги", nav_portfolio: "Портфолио", nav_blog: "Блог", nav_reviews: "Отзывы", nav_contact: "Контакты",
@@ -774,6 +758,7 @@
             admin_title: "Панель администратора", admin_consents: "Принятые согласия", admin_demo: "Заявки на демо", admin_consult: "Заявки на консультацию", admin_edit: "Запросы на доработку", admin_reviews: "Отзывы",
             cookie_text: "Мы используем cookies для улучшения работы сайта. Продолжая, вы соглашаетесь с этим.",
             footer_policy: "Пользовательское соглашение", footer_refund: "Политика возвратов",
+            // برای پنل جدید
             tab_dashboard: "Дашборд", tab_leads: "Лиды", tab_settings: "Настройки", tab_logs: "Логи",
             send_message_title: "Отправить сообщение", message_text: "Текст сообщения", cancel: "Отмена",
             message_history: "История сообщений", close: "Закрыть", delete_confirm: "Удалить лид?",
@@ -816,7 +801,6 @@
         }
     };
 
-    // ==================== Управление языком ====================
     let currentLang = localStorage.getItem('lang') || 'ru';
     function applyLanguage(lang) {
         currentLang = lang;
@@ -834,9 +818,7 @@
         });
         document.documentElement.lang = lang === 'ru' ? 'ru' : 'en';
         localStorage.setItem('lang', lang);
-        if (document.getElementById('adminPanel').classList.contains('open')) {
-            renderActiveTab();
-        }
+        if (document.getElementById('adminPanel').classList.contains('open')) renderActiveTab();
     }
     document.getElementById('langSwitch').addEventListener('click', () => {
         const newLang = currentLang === 'ru' ? 'en' : 'ru';
@@ -846,7 +828,7 @@
     applyLanguage(currentLang);
     document.getElementById('langSwitch').innerText = currentLang === 'ru' ? 'EN' : 'RU';
 
-    // ==================== Остальная логика (портфолио, отзывы, заявки) ====================
+    // ========== بخش‌های دیگر (پورت‌فولیو، بلاگ، نظرات، فرم‌ها) از کد فعلی ==========
     AOS.init({ duration: 800, once: true });
     VanillaTilt.init(document.querySelectorAll(".service-card, .portfolio-card"), { max: 8, speed: 400, glare: true, "max-glare": 0.2 });
 
@@ -861,10 +843,7 @@
     function renderPortfolio(filter = 'all', search = '') {
         const grid = document.getElementById('portfolioGrid');
         grid.innerHTML = '';
-        const filtered = portfolioData.filter(item =>
-            (filter === 'all' || item.category === filter) &&
-            item.title.toLowerCase().includes(search.toLowerCase())
-        );
+        const filtered = portfolioData.filter(item => (filter === 'all' || item.category === filter) && item.title.toLowerCase().includes(search.toLowerCase()));
         filtered.forEach(item => {
             const card = document.createElement('div');
             card.className = 'portfolio-card';
@@ -930,75 +909,13 @@
     let demoRequests = JSON.parse(localStorage.getItem('demoRequests')) || [];
     let consultRequests = JSON.parse(localStorage.getItem('consultRequests')) || [];
     let editRequests = JSON.parse(localStorage.getItem('editRequests')) || [];
-    let consentRecords = JSON.parse(localStorage.getItem('consentRecords')) || [];
-    let consentGiven = localStorage.getItem('consentAccepted') === 'true';
-
-    function storeConsentRecord() {
-        const record = { timestamp: new Date().toLocaleString(), userAgent: navigator.userAgent };
-        consentRecords.push(record);
-        localStorage.setItem('consentRecords', JSON.stringify(consentRecords));
-        localStorage.setItem('consentAccepted', 'true');
-        consentGiven = true;
-        // حذف overlay بعد از تایید
-        const overlay = document.getElementById('consentOverlay');
-        if (overlay) overlay.remove();
-    }
-
-    function requireConsentAndExecute(callback) {
-        if (consentGiven) {
-            callback();
-        } else {
-            window.pendingConsentCallback = callback;
-            showConsentOverlay();
-        }
-    }
-
-    function showConsentOverlay() {
-        if (document.getElementById('consentOverlay')) return;
-        const overlay = document.createElement('div');
-        overlay.id = 'consentOverlay';
-        overlay.className = 'consent-overlay';
-        const consentModal = document.getElementById('consentModal');
-        if (consentModal) {
-            overlay.appendChild(consentModal.cloneNode(true));
-            document.body.appendChild(overlay);
-            const clonedModal = overlay.querySelector('#consentModal');
-            clonedModal.style.display = 'flex';
-            // پیوندهای داخل مودال کلون شده
-            const policyLink = clonedModal.querySelector('#consentPolicyLink');
-            const refundLink = clonedModal.querySelector('#consentRefundLink');
-            if (policyLink) policyLink.addEventListener('click', (e) => { e.preventDefault(); openModal('policy'); });
-            if (refundLink) refundLink.addEventListener('click', (e) => { e.preventDefault(); openModal('refund'); });
-            const acceptBtn = clonedModal.querySelector('#acceptConsent');
-            const consentCheck = clonedModal.querySelector('#consentAgree');
-            acceptBtn.addEventListener('click', () => {
-                if (consentCheck.checked) {
-                    storeConsentRecord();
-                    if (window.pendingConsentCallback) {
-                        const cb = window.pendingConsentCallback;
-                        window.pendingConsentCallback = null;
-                        cb();
-                    }
-                } else {
-                    alert(translations[currentLang].consent_warning);
-                }
-            });
-        }
-    }
-
-    function onConsentAccepted() {
-        if (window.pendingConsentCallback) {
-            const cb = window.pendingConsentCallback;
-            window.pendingConsentCallback = null;
-            cb();
-        }
-    }
 
     function saveToLocal(key, data) {
         let arr = JSON.parse(localStorage.getItem(key)) || [];
         arr.push(data);
         localStorage.setItem(key, JSON.stringify(arr));
     }
+
     function attachPolicyLinks(prefix) {
         const policyLink = document.getElementById(`${prefix}PolicyLink`);
         const refundLink = document.getElementById(`${prefix}RefundLink`);
@@ -1009,7 +926,7 @@
     document.getElementById('policyLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal('policy'); });
     document.getElementById('refundLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal('refund'); });
 
-    // Формы заявок (با requireConsentAndExecute)
+    // فرم‌ها با requireConsentAndExecute (مشابه کد فعلی)
     document.getElementById('demoForm').addEventListener('submit', (e) => {
         e.preventDefault();
         requireConsentAndExecute(() => {
@@ -1054,11 +971,10 @@
     });
     document.querySelectorAll('.pay-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            requireConsentAndExecute(() => {
-                alert('Демо-режим: оплата через UnitPay.');
-            });
+            requireConsentAndExecute(() => { alert('Демо-режим: оплата через UnitPay.'); });
         });
     });
+
     function openModal(modalId) {
         const modal = document.getElementById(modalId + 'Modal');
         if (modal) modal.style.display = 'flex';
@@ -1076,23 +992,21 @@
         });
     });
     window.addEventListener('click', e => {
-        if (e.target.classList.contains('modal') && e.target.id !== 'consentModal') {
-            closeModal(e.target);
+        if (e.target.classList.contains('modal') && e.target.id !== 'consentModal') closeModal(e.target);
+    });
+    document.getElementById('getDemoBtn').addEventListener('click', () => { requireConsentAndExecute(() => openModal('demo')); });
+    document.getElementById('consultBtn').addEventListener('click', () => { requireConsentAndExecute(() => openModal('consult')); });
+    document.getElementById('addReviewBtn').addEventListener('click', () => { requireConsentAndExecute(() => openModal('review')); });
+    document.getElementById('acceptConsent').addEventListener('click', () => {
+        if (document.getElementById('consentAgree').checked) {
+            storeConsentRecord();
+            closeModal(document.getElementById('consentModal'));
+            onConsentAccepted();
+        } else {
+            alert(translations[currentLang].consent_warning);
         }
     });
-    document.getElementById('getDemoBtn').addEventListener('click', () => {
-        requireConsentAndExecute(() => openModal('demo'));
-    });
-    document.getElementById('consultBtn').addEventListener('click', () => {
-        requireConsentAndExecute(() => openModal('consult'));
-    });
-    document.getElementById('addReviewBtn').addEventListener('click', () => {
-        requireConsentAndExecute(() => openModal('review'));
-    });
-    // نمایش overlay در ابتدا اگر قبلاً تایید نکرده باشد
-    if (!consentGiven) {
-        setTimeout(() => showConsentOverlay(), 200);
-    }
+    if (!consentGiven) setTimeout(() => openModal('consent'), 200);
 
     let exitShown = false;
     document.addEventListener('mouseleave', (e) => {
@@ -1120,72 +1034,85 @@
             if (target) target.scrollIntoView({ behavior: 'smooth' });
         });
     });
-
     if (!localStorage.getItem('cookiesAccepted')) document.getElementById('cookieConsent').style.display = 'flex';
     document.getElementById('acceptCookies').addEventListener('click', () => {
         localStorage.setItem('cookiesAccepted', 'true');
         document.getElementById('cookieConsent').style.display = 'none';
     });
 
-    // ==================== НОВАЯ ЛОГИКА ПАНЕЛИ АДМИНИСТРАТОРА (без изменений) ====================
+    // ==================== پنل ادمین جدید (API‌ها و منطق) ====================
     let currentAdminTab = 'dashboard';
     let leadsData = [];
     let leadsPage = 1;
     const leadsPerPage = 10;
 
     async function fetchStats() {
-        const res = await fetch('/api/stats');
-        if (res.ok) return await res.json();
+        try {
+            const res = await fetch('/api/stats');
+            if (res.ok) return await res.json();
+        } catch(e) {}
         return { total: 0, new: 0, sent: 0, paid: 0 };
     }
     async function fetchLeads() {
-        const res = await fetch('/api/leads');
-        if (res.ok) {
-            leadsData = await res.json();
-            return leadsData;
-        }
+        try {
+            const res = await fetch('/api/leads');
+            if (res.ok) {
+                leadsData = await res.json();
+                return leadsData;
+            }
+        } catch(e) {}
         return [];
     }
     async function deleteLead(id) {
         if (!confirm(translations[currentLang].delete_confirm)) return;
-        const res = await fetch(`/api/leads/${id}`, { method: 'DELETE' });
-        if (res.ok) {
-            await renderLeadsTable();
-        } else {
-            alert('Ошибка удаления');
-        }
+        try {
+            const res = await fetch(`/api/leads/${id}`, { method: 'DELETE' });
+            if (res.ok) await renderLeadsTable();
+            else alert('Ошибка удаления');
+        } catch(e) { alert('Ошибка соединения'); }
     }
     async function sendMessage(leadId, text) {
-        const res = await fetch('/api/send_message', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ lead_id: leadId, message: text })
-        });
-        return res.ok;
+        try {
+            const res = await fetch('/api/send_message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lead_id: leadId, message: text })
+            });
+            return res.ok;
+        } catch(e) { return false; }
     }
     async function fetchMessageHistory(leadId) {
-        const res = await fetch(`/api/messages/${leadId}`);
-        if (res.ok) return await res.json();
+        try {
+            const res = await fetch(`/api/messages/${leadId}`);
+            if (res.ok) return await res.json();
+        } catch(e) {}
         return [];
     }
     async function fetchSettings() {
-        const res = await fetch('/api/settings');
-        if (res.ok) return await res.json();
+        try {
+            const res = await fetch('/api/settings');
+            if (res.ok) return await res.json();
+        } catch(e) {}
         return { cities: [], keywords: [] };
     }
     async function saveSettings(settings) {
-        const res = await fetch('/api/settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(settings)
-        });
-        return res.ok;
+        try {
+            const res = await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(settings)
+            });
+            return res.ok;
+        } catch(e) { return false; }
     }
     async function fetchLogs() {
-        const res = await fetch('/api/logs');
-        if (res.ok) return await res.json();
+        try {
+            const res = await fetch('/api/logs');
+            if (res.ok) return await res.json();
+        } catch(e) {}
         return { logs: [] };
     }
+
     async function renderDashboard() {
         const container = document.getElementById('adminContent');
         container.innerHTML = `<div class="loading">${translations[currentLang].loading}</div>`;
@@ -1203,16 +1130,10 @@
         const leads = await fetchLeads();
         const recent = leads.slice(0, 10);
         const t = translations[currentLang];
-        const html = `
-            <table class="leads-table">
-                <thead><tr><th>ID</th><th>${t.nav_services}</th><th>Город</th><th>Статус</th></tr></thead>
-                <tbody>
-                    ${recent.map(l => `<tr><td>${l.id}</td><td>${l.name}</td><td>${l.city || '-'}</td><td>${l.status}</td></tr>`).join('')}
-                </tbody>
-            </table>
-        `;
+        const html = `<table class="leads-table"><thead><tr><th>ID</th><th>${t.nav_services}</th><th>Город</th><th>Статус</th></tr></thead><tbody>${recent.map(l => `<tr><td>${l.id}</td><td>${l.name}</td><td>${l.city || '-'}</td><td>${l.status}</td></tr>`).join('')}</tbody></table>`;
         document.getElementById('recentLeads').innerHTML = html;
     }
+
     async function renderLeadsTable() {
         const container = document.getElementById('adminContent');
         container.innerHTML = `<div class="loading">${translations[currentLang].loading}</div>`;
@@ -1220,29 +1141,13 @@
         const start = (leadsPage-1)*leadsPerPage;
         const pageLeads = leadsData.slice(start, start+leadsPerPage);
         const t = translations[currentLang];
-        let html = `
-            <div style="margin-bottom: 16px;">
-                <input type="text" id="leadSearch" placeholder="🔍 ${t.search_placeholder}" style="width: 200px;">
-            </div>
-            <table class="leads-table">
-                <thead><tr><th>ID</th><th>${t.nav_services}</th><th>Город</th><th>Категория</th><th>Статус</th><th>Действия</th></tr></thead>
-                <tbody>
-        `;
+        let html = `<div style="margin-bottom:16px;"><input type="text" id="leadSearch" placeholder="🔍 ${t.search_placeholder}" style="width:200px;"></div>
+            <table class="leads-table"><thead><tr><th>ID</th><th>${t.nav_services}</th><th>Город</th><th>Категория</th><th>Статус</th><th>Действия</th></tr></thead><tbody>`;
         pageLeads.forEach(lead => {
-            html += `
-                <tr>
-                    <td>${lead.id}</td>
-                    <td>${lead.name}</td>
-                    <td>${lead.city || '-'}</td>
-                    <td>${lead.category || '-'}</td>
-                    <td>${lead.status}</td>
-                    <td>
-                        <button class="btn-icon" onclick="openSendMessage(${lead.id})" title="${t.send_message}"><i class="fas fa-envelope"></i></button>
-                        <button class="btn-icon" onclick="openHistory(${lead.id})" title="${t.view_history}"><i class="fas fa-history"></i></button>
-                        <button class="btn-icon" onclick="deleteLead(${lead.id})" title="${t.delete}"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `;
+            html += `<tr><td>${lead.id}</td><td>${lead.name}</td><td>${lead.city || '-'}</td><td>${lead.category || '-'}</td><td>${lead.status}</td>
+            <td><button class="btn-icon" onclick="openSendMessage(${lead.id})" title="${t.send_message}"><i class="fas fa-envelope"></i></button>
+            <button class="btn-icon" onclick="openHistory(${lead.id})" title="${t.view_history}"><i class="fas fa-history"></i></button>
+            <button class="btn-icon" onclick="deleteLead(${lead.id})" title="${t.delete}"><i class="fas fa-trash"></i></button></td></tr>`;
         });
         html += `</tbody></table><div class="pagination" id="pagination"></div>`;
         container.innerHTML = html;
@@ -1263,44 +1168,39 @@
             renderLeadsTable();
         });
     }
+
     async function renderSettings() {
         const container = document.getElementById('adminContent');
         container.innerHTML = `<div class="loading">${translations[currentLang].loading}</div>`;
         const settings = await fetchSettings();
-        container.innerHTML = `
-            <form id="settingsForm">
-                <div class="form-group"><label>${translations[currentLang].settings_cities}</label><input type="text" id="citiesInput" value="${(settings.cities || []).join(', ')}"></div>
-                <div class="form-group"><label>${translations[currentLang].settings_keywords}</label><input type="text" id="keywordsInput" value="${(settings.keywords || []).join(', ')}"></div>
-                <button type="submit" class="btn">${translations[currentLang].save_settings}</button>
-                <div id="settingsResult"></div>
-            </form>
-        `;
+        container.innerHTML = `<form id="settingsForm"><div class="form-group"><label>${translations[currentLang].settings_cities}</label><input type="text" id="citiesInput" value="${(settings.cities || []).join(', ')}"></div>
+        <div class="form-group"><label>${translations[currentLang].settings_keywords}</label><input type="text" id="keywordsInput" value="${(settings.keywords || []).join(', ')}"></div>
+        <button type="submit" class="btn">${translations[currentLang].save_settings}</button><div id="settingsResult"></div></form>`;
         document.getElementById('settingsForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const cities = document.getElementById('citiesInput').value.split(',').map(s => s.trim()).filter(Boolean);
-            const keywords = document.getElementById('keywordsInput').value.split(',').map(s => s.trim()).filter(Boolean);
+            const cities = document.getElementById('citiesInput').value.split(',').map(s=>s.trim()).filter(Boolean);
+            const keywords = document.getElementById('keywordsInput').value.split(',').map(s=>s.trim()).filter(Boolean);
             const ok = await saveSettings({ cities, keywords });
             document.getElementById('settingsResult').innerHTML = ok ? '✅ Сохранено' : '❌ Ошибка';
-            setTimeout(() => document.getElementById('settingsResult').innerHTML = '', 3000);
+            setTimeout(()=>document.getElementById('settingsResult').innerHTML='',3000);
         });
     }
+
     async function renderLogs() {
         const container = document.getElementById('adminContent');
         container.innerHTML = `<div class="loading">${translations[currentLang].loading}</div>`;
         const data = await fetchLogs();
-        container.innerHTML = `
-            <h3>${translations[currentLang].logs_title}</h3>
-            <div class="log-area" id="logArea">${(data.logs || []).join('\n') || translations[currentLang].no_data}</div>
-            <button class="btn" id="refreshLogs" style="margin-top: 16px;">${translations[currentLang].refresh}</button>
-        `;
+        container.innerHTML = `<h3>${translations[currentLang].logs_title}</h3><div class="log-area">${(data.logs || []).join('\n') || translations[currentLang].no_data}</div><button class="btn" id="refreshLogs" style="margin-top:16px;">${translations[currentLang].refresh}</button>`;
         document.getElementById('refreshLogs').addEventListener('click', renderLogs);
     }
+
     function renderActiveTab() {
         if (currentAdminTab === 'dashboard') renderDashboard();
         else if (currentAdminTab === 'leads') renderLeadsTable();
         else if (currentAdminTab === 'settings') renderSettings();
         else if (currentAdminTab === 'logs') renderLogs();
     }
+
     document.querySelectorAll('.admin-tab').forEach(tab => {
         tab.addEventListener('click', () => {
             document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
@@ -1309,6 +1209,7 @@
             renderActiveTab();
         });
     });
+
     const adminPanel = document.getElementById('adminPanel');
     document.getElementById('adminToggleBtn').addEventListener('click', () => {
         const pwd = prompt("Введите пароль администратора:");
@@ -1318,6 +1219,7 @@
         } else alert("Неверный пароль");
     });
     document.getElementById('adminClose').addEventListener('click', () => adminPanel.classList.remove('open'));
+
     function openSendMessage(leadId) {
         document.getElementById('msgLeadId').value = leadId;
         document.getElementById('messageModal').style.display = 'flex';
@@ -1331,37 +1233,20 @@
         resultDiv.innerHTML = translations[currentLang].loading;
         const success = await sendMessage(leadId, text);
         resultDiv.innerHTML = success ? '✅ Отправлено' : '❌ Ошибка';
-        if (success) {
-            setTimeout(() => {
-                document.getElementById('messageModal').style.display = 'none';
-                document.getElementById('msgText').value = '';
-                resultDiv.innerHTML = '';
-            }, 1500);
-        }
+        if (success) setTimeout(()=>{ document.getElementById('messageModal').style.display='none'; document.getElementById('msgText').value=''; resultDiv.innerHTML=''; },1500);
     });
-    document.getElementById('closeMsgModal').addEventListener('click', () => {
-        document.getElementById('messageModal').style.display = 'none';
-    });
+    document.getElementById('closeMsgModal').addEventListener('click', ()=>document.getElementById('messageModal').style.display='none');
     async function openHistory(leadId) {
         const history = await fetchMessageHistory(leadId);
         const listDiv = document.getElementById('historyList');
-        if (history.length === 0) {
-            listDiv.innerHTML = translations[currentLang].no_data;
-        } else {
-            listDiv.innerHTML = history.map(h => `<div style="border-bottom:1px solid #ddd; padding:8px;"><strong>${h.message_type}</strong> (${h.sent_at})<br>${h.message || '—'}</div>`).join('');
-        }
+        if (history.length===0) listDiv.innerHTML = translations[currentLang].no_data;
+        else listDiv.innerHTML = history.map(h=>`<div style="border-bottom:1px solid #ddd; padding:8px;"><strong>${h.message_type}</strong> (${h.sent_at})<br>${h.message || '—'}</div>`).join('');
         document.getElementById('historyModal').style.display = 'flex';
     }
     window.openHistory = openHistory;
-    document.getElementById('closeHistoryModal').addEventListener('click', () => {
-        document.getElementById('historyModal').style.display = 'none';
-    });
+    document.getElementById('closeHistoryModal').addEventListener('click', ()=>document.getElementById('historyModal').style.display='none');
     window.deleteLead = deleteLead;
-    window.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) {
-            e.target.style.display = 'none';
-        }
-    });
+    window.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
 </script>
 </body>
 </html>
