@@ -516,16 +516,18 @@
         .stat-card { background: var(--beige); padding: 25px; border-radius: 32px; text-align: center; transition: transform 0.2s; }
         .stat-card:hover { transform: translateY(-5px); }
         .stat-number { font-size: 2.6rem; font-weight: 800; color: var(--gold-dark); }
-        /* Enhanced leads table with more columns and pagination */
-        .leads-table-container {
-            overflow-x: auto;
-            position: relative;
-        }
         .leads-table {
             width: 100%;
             border-collapse: collapse;
             border-radius: 28px;
-            min-width: 1400px;
+            overflow-x: auto;
+            display: block;
+            margin-top: 15px;
+        }
+        .leads-table thead, .leads-table tbody {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
         }
         .leads-table th, .leads-table td {
             border: 1px solid var(--border-light);
@@ -541,80 +543,6 @@
         }
         .leads-table th:hover {
             background: rgba(200,169,106,0.3);
-        }
-        .editable-status {
-            cursor: pointer;
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 50px;
-            background: #ffd966;
-            transition: 0.2s;
-        }
-        .editable-status:hover {
-            opacity: 0.8;
-            transform: scale(0.98);
-        }
-        .status-select {
-            padding: 4px 8px;
-            border-radius: 50px;
-            border: 1px solid var(--gold);
-            background: var(--bg-card);
-            color: var(--text-primary);
-        }
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .pagination button {
-            padding: 8px 14px;
-            border-radius: 40px;
-            background: var(--beige);
-            border: 1px solid var(--border-light);
-            cursor: pointer;
-            transition: 0.2s;
-            color: var(--text-primary);
-        }
-        .pagination button.active {
-            background: var(--gold);
-            color: #2c2118;
-            border-color: var(--gold);
-        }
-        .pagination button:hover:not(:disabled) {
-            background: var(--gold-dark);
-            color: white;
-        }
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .followup-log {
-            background: var(--beige);
-            padding: 12px;
-            border-radius: 20px;
-            margin-top: 15px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .followup-item {
-            padding: 8px;
-            border-bottom: 1px solid var(--border-light);
-            font-size: 0.8rem;
-        }
-        .loading-indicator {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 50px;
-            z-index: 10001;
-            display: none;
-            font-size: 1rem;
         }
         .btn-icon {
             background: none;
@@ -716,11 +644,20 @@
         .detail-value a:hover {
             text-decoration: underline;
         }
+        .color-preview {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
         .logo-thumb {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 12px;
-            border: 1px solid var(--gold);
+            max-width: 40px;
+            max-height: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
         }
         @media (max-width: 640px) {
             .lead-details-grid { grid-template-columns: 1fr; }
@@ -743,31 +680,255 @@
 </head>
 <body>
 <div class="particles" id="particles"></div>
-<div id="loadingIndicator" class="loading-indicator">⏳ Processing...</div>
 <header class="header"><div class="container"><div class="logo"><div class="logo-monogram">UW</div><div class="logo-text">UNIQUE<br><span>WEB STUDIO</span></div></div><div class="mobile-menu"><i class="fas fa-bars"></i></div><div class="nav"><a href="#services" data-i18n="nav_services">Services</a><a href="#portfolio" data-i18n="nav_portfolio">Portfolio</a><a href="#blog" data-i18n="nav_blog">Blog</a><a href="#reviews" data-i18n="nav_reviews">Reviews</a><a href="#contact" data-i18n="nav_contact">Contacts</a><button class="lang-switch" id="langSwitch">RU</button><button class="admin-toggle" id="adminToggleBtn"><i class="fas fa-chart-line"></i></button><button id="darkModeToggle"><i class="fas fa-moon"></i></button></div></div></header>
 <section class="hero"><div class="container"><h1 data-i18n="hero_title">We create websites that work for you</h1><p data-i18n="hero_desc">Modern design, high conversion, full support. Order your website today.</p><div class="btn-group"><button class="btn" id="getDemoBtn"><i class="fas fa-paper-plane"></i> <span data-i18n="hero_demo_btn">Get demo</span></button><button class="btn btn-outline" id="consultBtn"><i class="fas fa-comment-dots"></i> <span data-i18n="hero_consult_btn">Request consultation</span></button></div></div></section>
 <section id="services"><div class="container text-center" data-aos="fade-up"><h2 data-i18n="services_title">Our Services</h2><div class="services-grid" id="servicesGrid"></div></div></section>
 <section id="portfolio"><div class="container" data-aos="fade-up"><h2 data-i18n="portfolio_title">Our Projects</h2><div class="portfolio-controls"><div class="filter-buttons"><button class="filter-btn active" data-filter="all" data-i18n="filter_all">All</button><button class="filter-btn" data-filter="landing" data-i18n="filter_landing">Landings</button><button class="filter-btn" data-filter="shop" data-i18n="filter_shop">Shops</button><button class="filter-btn" data-filter="corp" data-i18n="filter_corp">Corporate</button></div><input type="text" id="portfolioSearch" class="search-input" data-i18n-placeholder="search_placeholder" placeholder="Search..."></div><div class="portfolio-grid" id="portfolioGrid"></div></div></section>
 <section id="blog"><div class="container" data-aos="fade-up"><h2 data-i18n="blog_title">Blog</h2><div class="blog-grid" id="blogGrid"></div></div></section>
 <section id="reviews"><div class="container" data-aos="fade-up"><h2 data-i18n="reviews_title">Client Reviews</h2><div class="swiper reviews-swiper"><div class="swiper-wrapper" id="reviewsSwiperWrapper"></div><div class="swiper-pagination"></div></div><div style="text-align: center; margin-top: 30px;"><button class="btn btn-outline" id="addReviewBtn" data-i18n="add_review_btn">Leave a review</button></div></div></section>
-<section id="edit-request"><div class="container" data-aos="fade-up"><h2 data-i18n="edit_title">Order website edit</h2><form id="editForm" style="max-width: 600px; margin: 0 auto;"><div class="form-group"><input type="text" id="editName" data-i18n-placeholder="edit_name" placeholder="Your name"></div><div class="form-group"><input type="email" id="editEmail" data-i18n-placeholder="edit_email" placeholder="Email"></div><div class="form-group"><input type="tel" id="editPhone" data-i18n-placeholder="edit_phone" placeholder="Phone"></div><div class="form-group"><input type="url" id="editVk" data-i18n-placeholder="edit_vk" placeholder="VK link"></div><div class="form-group"><input type="url" id="editSite" data-i18n-placeholder="edit_site" placeholder="Website URL"></div><div class="form-group"><select id="editType"><option value="">--</option><option value="design" data-i18n="edit_type_design">Design</option><option value="function" data-i18n="edit_type_function">Functionality</option><option value="content" data-i18n="edit_type_content">Content</option><option value="other" data-i18n="edit_type_other">Other</option></select></div><div class="form-group"><input type="date" id="editDesiredDate" placeholder="Desired date"></div><div class="form-group"><textarea id="editDescription" rows="4" data-i18n-placeholder="edit_desc" placeholder="Describe what needs improvement"></textarea></div><div class="form-group"><label class="field-label"><i class="fas fa-language"></i> Preferred Language for Website</label><select id="editLanguage"><option value="en">English</option><option value="ru">Russian</option></select><div class="field-description">Choose the language in which you want your site to be built</div></div><div class="checkbox-group"><input type="checkbox" id="editAgree" required><label for="editAgree" data-i18n="agree_label">I agree to the <a href="#" id="editPolicyLink">Terms of Use</a> and <a href="#" id="editRefundLink">Refund Policy</a></label></div><button type="submit" class="btn" data-i18n="send_btn">Submit request</button><div id="editResult"></div></form></div></section>
+<section id="edit-request"><div class="container" data-aos="fade-up"><h2 data-i18n="edit_title">Order website edit</h2><form id="editForm" style="max-width: 600px; margin: 0 auto;">
+    <div class="form-group"><input type="text" id="editName" data-i18n-placeholder="edit_name" placeholder="Your name"></div>
+    <div class="form-group"><input type="email" id="editEmail" data-i18n-placeholder="edit_email" placeholder="Email"></div>
+    <div class="form-group"><input type="tel" id="editPhone" data-i18n-placeholder="edit_phone" placeholder="Phone"></div>
+    <div class="form-group"><input type="url" id="editVk" data-i18n-placeholder="edit_vk" placeholder="VK link"></div>
+    <div class="form-group"><input type="url" id="editSite" data-i18n-placeholder="edit_site" placeholder="Website URL"></div>
+    <div class="form-group"><select id="editType"><option value="">--</option><option value="design" data-i18n="edit_type_design">Design</option><option value="function" data-i18n="edit_type_function">Functionality</option><option value="content" data-i18n="edit_type_content">Content</option><option value="other" data-i18n="edit_type_other">Other</option></select></div>
+    <div class="form-group"><input type="date" id="editDesiredDate" placeholder="Desired date"></div>
+    <div class="form-group"><textarea id="editDescription" rows="4" data-i18n-placeholder="edit_desc" placeholder="Describe what needs improvement"></textarea></div>
+    <div class="form-group">
+        <label class="field-label"><i class="fas fa-language"></i> Preferred Language for Website</label>
+        <select id="editLanguage">
+            <option value="en">English</option>
+            <option value="ru">Russian</option>
+        </select>
+        <div class="field-description">Choose the language in which you want your site to be built</div>
+    </div>
+    <div class="checkbox-group"><input type="checkbox" id="editAgree" required><label for="editAgree" data-i18n="agree_label">I agree to the <a href="#" id="editPolicyLink">Terms of Use</a> and <a href="#" id="editRefundLink">Refund Policy</a></label></div>
+    <button type="submit" class="btn" data-i18n="send_btn">Submit request</button><div id="editResult"></div>
+</form></div></section>
 <section id="contact"><div class="container" data-aos="fade-up"><h2 data-i18n="contact_title">Contacts</h2><div style="display: flex; flex-wrap: wrap; gap: 40px;"><div class="contact-info"><p><i class="fas fa-envelope"></i> <a href="mailto:uniqe.studio@yandex.ru">uniqe.studio@yandex.ru</a></p><p><i class="fas fa-phone-alt"></i> <a href="tel:+79651776233">+7 (965) 177-62-33</a></p><div class="contact-social"><a href="https://t.me/UNIQE_WEB_STUDIO" target="_blank"><i class="fab fa-telegram fa-2x"></i></a><a href="https://wa.me/79651776233" target="_blank"><i class="fab fa-whatsapp fa-2x"></i></a><a href="https://vk.com/unique__business" target="_blank"><i class="fab fa-vk fa-2x"></i></a><a href="max://chat?phone=+79651776233" target="_blank" title="Max Messenger"><img src="https://play-lh.googleusercontent.com/iXp_mU8RC7rYuWgQeE5y-VuO-UPMIB4glAClkiyrJUnfKraqdFZtzX-7tUwgwEh2AGE" alt="Max" class="max-contact-logo"></a></div></div></div></div></section>
 <footer><div class="container"><p data-i18n="footer_copyright">&copy; 2025 Unique Web Studio. All rights reserved.</p><p><a href="#" id="policyLink" data-i18n="footer_policy">Terms of Use</a> | <a href="#" id="refundLink" data-i18n="footer_refund">Refund Policy</a></p></div></footer>
 <div class="floating-buttons"><a href="https://wa.me/79651776233" class="floating-btn" target="_blank"><i class="fab fa-whatsapp"></i></a><a href="https://t.me/UNIQE_WEB_STUDIO" class="floating-btn telegram" target="_blank"><i class="fab fa-telegram"></i></a><a href="https://vk.com/unique__business" class="floating-btn vk" target="_blank"><i class="fab fa-vk"></i></a><a href="max://chat?phone=+79651776233" class="floating-btn max" target="_blank" title="Max Messenger"><img src="https://play-lh.googleusercontent.com/iXp_mU8RC7rYuWgQeE5y-VuO-UPMIB4glAClkiyrJUnfKraqdFZtzX-7tUwgwEh2AGE" alt="Max Messenger"></a></div>
 <div class="scroll-top" id="scrollTop"><i class="fas fa-arrow-up"></i></div>
 
-<!-- Modals (same as before, but we keep them unchanged) -->
-<div id="demoModal" class="modal">...</div>
-<div id="consultModal" class="modal">...</div>
-<div id="reviewModal" class="modal">...</div>
-<div id="paymentModal" class="modal">...</div>
-<div id="policyModal" class="modal">...</div>
-<div id="refundModal" class="modal">...</div>
-<div id="exitModal" class="modal">...</div>
-<div id="consentModal" class="modal">...</div>
-<div id="leadDetailsModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3 data-i18n="lead_details_title">Lead Details</h3><div id="leadDetailsContent" class="lead-details-grid"></div><div class="followup-log" id="followupLog"><strong>Follow-up History</strong><div id="followupEntries"></div></div><div class="quick-actions" style="margin-top:15px;"><button class="btn btn-outline" id="addFollowupBtn">➕ Add Follow-up Note</button></div></div></div>
-<div id="blogModal" class="modal">...</div>
-<div id="orderServiceModal" class="modal">...</div>
+<!-- Modals (all original modals remain unchanged) -->
+<div id="demoModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3 data-i18n="demo_modal_title">Get demo site</h3>
+        <form id="demoForm" enctype="multipart/form-data">
+            <div class="demo-form-grid">
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_business_name_label"><i class="fas fa-building"></i> Business name</label>
+                    <input type="text" id="demoBusinessName" data-i18n-placeholder="demo_business_name">
+                    <div class="field-description" data-i18n="demo_business_name_desc">Your company or project name</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_city_label"><i class="fas fa-city"></i> City</label>
+                    <input type="text" id="demoCity" data-i18n-placeholder="demo_city">
+                    <div class="field-description" data-i18n="demo_city_desc">Where your business is located</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_category_label"><i class="fas fa-code-branch"></i> Website type</label>
+                    <select id="demoCategory">
+                        <option value="landing" data-i18n="demo_category_landing">Landing Page (from 6,000 ₽)</option>
+                        <option value="ecommerce" data-i18n="demo_category_ecommerce">Online Store (from 12,000 ₽)</option>
+                        <option value="corporate" data-i18n="demo_category_corporate">Corporate Website (from 9,000 ₽)</option>
+                    </select>
+                    <div class="field-description" data-i18n="demo_category_desc">Choose the type of website you need</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_phone_label"><i class="fas fa-phone-alt"></i> Phone number</label>
+                    <input type="tel" id="demoPhone" data-i18n-placeholder="demo_phone">
+                    <div class="field-description" data-i18n="demo_phone_desc">For quick contact</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_vk_label"><i class="fab fa-vk"></i> VK profile / page</label>
+                    <input type="url" id="demoVk" data-i18n-placeholder="demo_vk">
+                    <button type="button" id="fillFromVkBtn" class="btn-outline" style="margin-top:8px;" data-i18n="fill_from_vk">Fill from VK</button>
+                    <div class="field-description" data-i18n="demo_vk_desc">Link to your VK page (optional, helps us understand your style)</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_email_label"><i class="fas fa-envelope"></i> Email address</label>
+                    <input type="email" id="demoEmail" data-i18n-placeholder="demo_email">
+                    <div class="field-description" data-i18n="demo_email_desc">We'll send the demo link here</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_address_label"><i class="fas fa-map-marker-alt"></i> Business address</label>
+                    <input type="text" id="demoAddress" data-i18n-placeholder="demo_address">
+                    <div class="field-description" data-i18n="demo_address_desc">If you have a physical location</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_brand_color_label"><i class="fas fa-palette"></i> Brand color</label>
+                    <input type="color" id="demoBrandColor" value="#C8A96A">
+                    <div class="field-description" data-i18n="demo_brand_color_desc">Main color of your brand</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_logo_label"><i class="fas fa-image"></i> Logo (optional)</label>
+                    <input type="file" id="demoLogo" accept="image/*">
+                    <div class="field-description" data-i18n="demo_logo_desc">Upload your logo (PNG, JPG)</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_domain_label"><i class="fas fa-globe"></i> Desired domain</label>
+                    <input type="url" id="demoDomain" data-i18n-placeholder="demo_domain">
+                    <div class="field-description" data-i18n="demo_domain_desc">If you already have a domain name in mind</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_referrer_label"><i class="fas fa-chart-line"></i> How did you find us?</label>
+                    <select id="demoReferrer">
+                        <option value="" data-i18n="demo_referrer_select">-- Select --</option>
+                        <option value="vk" data-i18n="demo_referrer_vk">VK</option>
+                        <option value="telegram" data-i18n="demo_referrer_telegram">Telegram</option>
+                        <option value="search" data-i18n="demo_referrer_search">Search engine</option>
+                        <option value="friend" data-i18n="demo_referrer_friend">Friend recommendation</option>
+                        <option value="other" data-i18n="demo_referrer_other">Other</option>
+                    </select>
+                    <div class="field-description" data-i18n="demo_referrer_desc">Help us improve our marketing</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_budget_label"><i class="fas fa-ruble-sign"></i> Approximate budget</label>
+                    <input type="text" id="demoBudget" data-i18n-placeholder="demo_budget">
+                    <div class="field-description" data-i18n="demo_budget_desc">So we can offer the best solution</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label" data-i18n="demo_existing_site_label"><i class="fas fa-link"></i> Current website (if any)</label>
+                    <input type="url" id="demoExistingSite" data-i18n-placeholder="demo_existing_site">
+                    <div class="field-description" data-i18n="demo_existing_site_desc">If you already have a site, we can redesign it</div>
+                </div>
+                <div class="form-group">
+                    <label class="field-label"><i class="fas fa-language"></i> Preferred Language for Website</label>
+                    <select id="demoLanguage">
+                        <option value="en">English</option>
+                        <option value="ru">Russian</option>
+                    </select>
+                    <div class="field-description">Choose the language in which you want your site to be built</div>
+                </div>
+                <div class="form-group demo-full-width">
+                    <label class="field-label" data-i18n="demo_hosting_label"><i class="fas fa-server"></i> Hosting & domain status</label>
+                    <div class="checkbox-group" style="margin:0">
+                        <input type="checkbox" id="demoHasHosting"> <label for="demoHasHosting" data-i18n="demo_has_hosting">I already have hosting and domain</label>
+                    </div>
+                    <div class="field-description" data-i18n="demo_hosting_desc">Let us know if you already have hosting</div>
+                </div>
+                <div class="form-group demo-full-width">
+                    <label class="field-label" data-i18n="demo_notes_label"><i class="fas fa-comment-dots"></i> Additional notes</label>
+                    <textarea id="demoNotes" rows="3" data-i18n-placeholder="demo_notes"></textarea>
+                    <div class="field-description" data-i18n="demo_notes_desc">Anything else we should know?</div>
+                </div>
+                <div class="form-group demo-full-width">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="demoAgree">
+                        <label for="demoAgree" data-i18n="agree_label">I agree to the <a href="#" id="demoPolicyLink">Terms of Use</a> and <a href="#" id="demoRefundLink">Refund Policy</a></label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="demoSendCopy"> <label for="demoSendCopy" data-i18n="send_copy">Send copy of this request to my email</label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn" data-i18n="send_btn">Submit request</button>
+        </form>
+        <div id="demoResult"></div>
+    </div>
+</div>
+<div id="consultModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3 data-i18n="consult_modal_title">Request consultation</h3><form id="consultForm">
+    <div class="form-group"><input type="text" id="consultName" data-i18n-placeholder="consult_name" placeholder="Your name"></div>
+    <div class="form-group"><input type="email" id="consultEmail" data-i18n-placeholder="consult_email" placeholder="Email"></div>
+    <div class="form-group"><input type="tel" id="consultPhone" data-i18n-placeholder="consult_phone" placeholder="Phone"></div>
+    <div class="form-group"><input type="url" id="consultVk" data-i18n-placeholder="consult_vk" placeholder="VK link"></div>
+    <div class="form-group"><textarea id="consultMessage" rows="4" data-i18n-placeholder="consult_message" placeholder="Your question"></textarea></div>
+    <div class="form-group">
+        <label class="field-label"><i class="fas fa-language"></i> Preferred Language for Website</label>
+        <select id="consultLanguage">
+            <option value="en">English</option>
+            <option value="ru">Russian</option>
+        </select>
+        <div class="field-description">If you are interested in a website, choose your preferred language</div>
+    </div>
+    <div class="checkbox-group"><input type="checkbox" id="consultAgree" required><label for="consultAgree" data-i18n="agree_label">I agree to the <a href="#" id="consultPolicyLink">Terms of Use</a> and <a href="#" id="consultRefundLink">Refund Policy</a></label></div>
+    <div class="checkbox-group"><input type="checkbox" id="consultSendCopy"> <label for="consultSendCopy" data-i18n="send_copy">Send copy to email</label></div>
+    <button type="submit" class="btn" data-i18n="send_btn">Submit</button>
+</form><div id="consultResult"></div></div></div>
+<div id="reviewModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3 data-i18n="review_modal_title">Leave a review</h3>
+        <form id="reviewForm">
+            <div class="form-group"><input type="text" id="reviewName" data-i18n-placeholder="review_name" placeholder="Your name"></div>
+            <div class="form-group"><div class="star-rating" id="starRating" style="display:flex; justify-content:center; gap:10px; font-size:2rem; cursor:pointer;"><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span></div></div>
+            <div class="form-group"><textarea id="reviewText" rows="3" data-i18n-placeholder="review_text" placeholder="Your review"></textarea></div>
+            <div class="form-group"><input type="number" id="reviewAmount" placeholder="Amount spent (RUB)" step="100" min="0"></div>
+            <div class="checkbox-group"><input type="checkbox" id="reviewAgree" required><label for="reviewAgree" data-i18n="agree_label">I agree to the <a href="#" id="reviewPolicyLink">Terms of Use</a> and <a href="#" id="reviewRefundLink">Refund Policy</a></label></div>
+            <button type="submit" class="btn" data-i18n="send_btn">Submit</button>
+        </form>
+        <div id="reviewResult"></div>
+    </div>
+</div>
+<div id="paymentModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3 data-i18n="payment_title">Submit payment details</h3><form id="paymentForm"><div class="form-group"><input type="text" id="paymentLeadId" placeholder="Lead ID (received after demo request)" required></div><div class="form-group"><input type="text" id="paymentTransactionId" placeholder="Transaction ID from bank" required></div><div class="form-group"><input type="number" id="paymentAmount" placeholder="Amount in RUB" required></div><div class="checkbox-group"><input type="checkbox" id="paymentAgree" required><label for="paymentAgree" data-i18n="agree_label">I confirm that the payment has been made</label></div><button type="submit" class="btn" data-i18n="send_btn">Submit payment info</button><div class="payment-note">⚠️ After submitting, your payment will be verified manually. You will receive the final website link within 24h.</div></form><div id="paymentResult"></div></div></div>
+<div id="policyModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><div class="modal-lang-switch"><button class="modal-lang-btn policy-lang-ru">RU</button><button class="modal-lang-btn policy-lang-en active">EN</button></div><h3>Terms of Use</h3><div class="policy-content-ru" style="display:none;"><p><strong>1. Общие положения</strong><br>Настоящее соглашение регулирует отношения между Исполнителем (Unique Web Studio) и Заказчиком при заказе услуг по разработке сайта. Заказчик обязуется предоставить достоверную информацию для создания сайта. Исполнитель обязуется выполнить работу в согласованные сроки.</p><p><strong>2. Порядок оплаты</strong><br>Оплата производится через платёжную систему UnitPay. Предоплата 50% от стоимости, оставшаяся сумма после сдачи проекта. Сроки возврата средств регулируются Политикой возвратов.</p><p><strong>3. Ответственность сторон</strong><br>Исполнитель не несёт ответственности за содержание предоставленных Заказчиком материалов. Заказчик гарантирует законность использования всех материалов.</p><p><strong>4. Конфиденциальность</strong><br>Стороны обязуются не разглашать коммерческую информацию, полученную в рамках сотрудничества.</p><p><strong>5. Форс-мажор</strong><br>Стороны освобождаются от ответственности за неисполнение обязательств при наступлении обстоятельств непреодолимой силы.</p></div><div class="policy-content-en" style="display:block;"><p><strong>1. General Provisions</strong><br>This agreement governs the relationship between the Contractor (Unique Web Studio) and the Customer when ordering website development services. The Customer undertakes to provide reliable information for the creation of the website. The Contractor undertakes to perform the work within the agreed time.</p><p><strong>2. Payment Procedure</strong><br>Payment is made through the UnitPay payment system. Prepayment of 50% of the cost, the remaining amount after project delivery. Refund terms are regulated by the Refund Policy.</p><p><strong>3. Liability of the Parties</strong><br>The Contractor is not responsible for the content of materials provided by the Customer. The Customer guarantees the legality of using all materials.</p><p><strong>4. Confidentiality</strong><br>The Parties undertake not to disclose commercial information obtained during cooperation.</p><p><strong>5. Force Majeure</strong><br>The Parties are released from liability for non-performance of obligations in the event of force majeure.</p></div></div></div>
+<div id="refundModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><div class="modal-lang-switch"><button class="modal-lang-btn refund-lang-ru">RU</button><button class="modal-lang-btn refund-lang-en active">EN</button></div><h3>Refund Policy</h3><div class="refund-content-ru" style="display:none;"><p><strong>1. Возврат предоплаты</strong><br>Предоплата возвращается в полном объёме, если Исполнитель не приступил к работе в течение 5 рабочих дней с момента оплаты. Если работа начата, возврат возможен за вычетом фактически понесённых расходов (не более 30% от суммы).</p><p><strong>2. Возврат после сдачи проекта</strong><br>После подписания акта приёмки-передачи возврат не осуществляется, за исключением случаев выявления критических ошибок, не устранённых в течение 14 дней.</p><p><strong>3. Порядок подачи жалобы</strong><br>Для подачи аргументированной жалобы или запроса на возврат средств необходимо отправить письмо на официальную почту студии: <strong>uniqe.studio@yandex.ru</strong>. В письме обязательно указать номер заказа (если есть), описание проблемы с приложением подтверждающих материалов (скриншоты, переписка) и контактные данные. Срок рассмотрения жалобы составляет до 10 (десяти) рабочих дней.</p><p><strong>4. Основания для отказа в возврате</strong><br>Отказ возможен, если Заказчик нарушил условия пользовательского соглашения, предоставил недостоверные данные или отказался от сотрудничества после начала работ без уважительной причины.</p></div><div class="refund-content-en" style="display:block;"><p><strong>1. Refund of prepayment</strong><br>The prepayment is refunded in full if the Contractor has not started work within 5 business days from the date of payment. If work has begun, a refund is possible minus actual expenses incurred (no more than 30% of the amount).</p><p><strong>2. Refund after project delivery</strong><br>After signing the acceptance certificate, no refund is made, except in cases of critical errors that have not been fixed within 14 days.</p><p><strong>3. Complaint procedure</strong><br>To file a reasoned complaint or refund request, you must send a letter to the studio's official email: <strong>uniqe.studio@yandex.ru</strong>. The letter must include the order number (if any), a description of the problem with supporting materials (screenshots, correspondence) and contact details. The complaint review period is up to 10 (ten) business days.</p><p><strong>4. Grounds for refusal of refund</strong><br>Refusal is possible if the Customer violated the terms of the user agreement, provided false information, or refused to cooperate after the start of work without good reason.</p></div></div></div>
+<div id="exitModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3 data-i18n="exit_title">Don't go!</h3><p data-i18n="exit_text">Leave a request and get 10% discount on any package.</p><button class="btn" id="exitBtn" data-i18n="exit_btn">Get discount</button></div></div>
+<div id="consentModal" class="modal"><div class="modal-content"><h3 class="consent-title-ru" style="display:none;">❗ Важное уведомление</h3><h3 class="consent-title-en">❗ Important notice</h3><p class="consent-desc-ru" style="display:none;">Для использования сайта и отправки заявок необходимо ознакомиться и согласиться с условиями:</p><p class="consent-desc-en">To use the site and submit requests, you must read and agree to the terms:</p><ul><li><a href="#" id="consentPolicyLink">Terms of Use</a></li><li><a href="#" id="consentRefundLink">Refund Policy</a></li></ul><div class="checkbox-group"><input type="checkbox" id="consentAgree"><label for="consentAgree" class="consent-checkbox-ru" style="display:none;">Я принимаю условия</label><label for="consentAgree" class="consent-checkbox-en">I accept the terms</label></div><button class="btn" id="acceptConsent" style="display:none;">Продолжить</button><button class="btn" id="acceptConsentEn">Continue</button><p class="consent-warning-ru" style="margin-top:15px; font-size:0.85rem; display:none;">Без принятия условий отправка заявок невозможна.</p><p class="consent-warning-en" style="margin-top:15px; font-size:0.85rem;">Without acceptance, requests cannot be sent.</p></div></div>
+<div id="leadDetailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3 data-i18n="lead_details_title">Lead Details</h3>
+        <div id="leadDetailsContent" class="lead-details-grid"></div>
+    </div>
+</div>
+
+<!-- Blog Reading Modal -->
+<div id="blogModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3 id="blogModalTitle">Blog Post</h3>
+        <div id="blogModalContent" style="margin-top: 20px; line-height: 1.6;"></div>
+    </div>
+</div>
+
+<!-- Service Order Modal -->
+<div id="orderServiceModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>Order Service</h3>
+        <form id="orderServiceForm">
+            <div class="form-group">
+                <label class="field-label"><i class="fas fa-tag"></i> Service</label>
+                <input type="text" id="orderServiceName" readonly style="background: rgba(200,169,106,0.1); font-weight: 600;">
+            </div>
+            <div class="form-group">
+                <label class="field-label"><i class="fas fa-user"></i> Your Name *</label>
+                <input type="text" id="orderName" required>
+            </div>
+            <div class="form-group">
+                <label class="field-label"><i class="fas fa-envelope"></i> Email *</label>
+                <input type="email" id="orderEmail" required>
+            </div>
+            <div class="form-group">
+                <label class="field-label"><i class="fas fa-phone-alt"></i> Phone *</label>
+                <input type="tel" id="orderPhone" required>
+            </div>
+            <div class="form-group">
+                <label class="field-label"><i class="fas fa-comment-dots"></i> Additional info</label>
+                <textarea id="orderMessage" rows="3" placeholder="Any special requirements or questions..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="field-label"><i class="fas fa-language"></i> Preferred Language for Website</label>
+                <select id="orderLanguage">
+                    <option value="en">English</option>
+                    <option value="ru">Russian</option>
+                </select>
+                <div class="field-description">Choose the language in which you want your site to be built</div>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="orderAgree" required>
+                <label for="orderAgree" data-i18n="agree_label">I agree to the <a href="#" id="orderPolicyLink">Terms of Use</a> and <a href="#" id="orderRefundLink">Refund Policy</a></label>
+            </div>
+            <button type="submit" class="btn">Submit order</button>
+        </form>
+        <div id="orderResult"></div>
+    </div>
+</div>
+
 <div id="adminPanel" class="admin-panel"><div class="admin-header"><h2 data-i18n="admin_title">Admin Panel</h2><span class="admin-close" id="adminClose">&times;</span></div><div class="admin-tabs"><div class="admin-tab active" data-tab="dashboard" data-i18n="tab_dashboard">Dashboard</div><div class="admin-tab" data-tab="leads" data-i18n="tab_leads">Leads</div><div class="admin-tab" data-tab="analytics" data-i18n="tab_analytics">📊 Analytics</div><div class="admin-tab" data-tab="seo" data-i18n="tab_seo">🔍 SEO</div><div class="admin-tab" data-tab="backup" data-i18n="tab_backup">💾 Backup</div><div class="admin-tab" data-tab="notifications" data-i18n="tab_notifications">🔔 Notifications</div><div class="admin-tab" data-tab="followup" data-i18n="tab_followup">⏰ Follow-up</div><div class="admin-tab" data-tab="scraper" data-i18n="tab_scraper">🤖 Lead scraper</div><div class="admin-tab" data-tab="tickets" data-i18n="tab_tickets">🎫 Tickets</div><div class="admin-tab" data-tab="settings" data-i18n="tab_settings">⚙️ Settings</div><div class="admin-tab" data-tab="logs" data-i18n="tab_logs">📜 Logs</div><div class="admin-tab" data-tab="editor" data-i18n="tab_editor">✏️ Text Editor</div></div><div id="adminContent"></div></div>
 <div id="cookieConsent" class="cookie-consent"><span data-i18n="cookie_text">We use cookies to improve your experience. By continuing, you agree.</span><button id="acceptCookies" class="btn">OK</button></div>
 
@@ -785,124 +946,653 @@
     let sortDirection = 'asc';
     let statusFilter = 'all';
     let paymentFilter = 'all';
-    let languageFilter = 'all';
-    let referrerFilter = 'all';
-    let editTypeFilter = 'all';
-    let serviceFilter = 'all';
     let searchTerm = '';
-    let currentPage = 1;
-    let rowsPerPage = 15;
-    let followupHistory = JSON.parse(localStorage.getItem('followupHistory')) || {};
 
-    // Show/hide loading indicator
-    function showLoading() { document.getElementById('loadingIndicator').style.display = 'flex'; }
-    function hideLoading() { document.getElementById('loadingIndicator').style.display = 'none'; }
-
-    // Browser notification for new leads
-    let lastLeadCount = 0;
-    function checkNewLeads() {
-        if (leadsData.length > lastLeadCount && Notification.permission === 'granted') {
-            new Notification('New Lead Received!', { body: `You have ${leadsData.length - lastLeadCount} new lead(s).` });
+    // ==================== TRANSLATIONS (RU/EN) ====================
+    let translations = {
+        ru: {
+            nav_services: "Услуги", nav_portfolio: "Портфолио", nav_blog: "Блог", nav_reviews: "Отзывы", nav_contact: "Контакты",
+            hero_title: "Создаем сайты, которые работают на вас", hero_desc: "Современный дизайн, высокая конверсия, полная поддержка. Закажите сайт уже сегодня.",
+            hero_demo_btn: "Получить демо", hero_consult_btn: "Заказать консультацию",
+            services_title: "Наши услуги", portfolio_title: "Наши проекты", blog_title: "Блог", reviews_title: "Отзывы клиентов",
+            edit_title: "Заказать доработку сайта", contact_title: "Контакты",
+            filter_all: "Все", filter_landing: "Лендинги", filter_shop: "Магазины", filter_corp: "Корпоративные", search_placeholder: "Поиск...",
+            add_review_btn: "Оставить отзыв",
+            edit_name: "Ваше имя", edit_email: "Email", edit_phone: "Телефон", edit_vk: "Ссылка VK", edit_site: "Ссылка на сайт",
+            edit_type: "Тип доработки", edit_type_design: "Дизайн", edit_type_function: "Функционал", edit_type_content: "Контент", edit_type_other: "Другое",
+            edit_desired_date: "Желаемая дата", edit_desc: "Опишите, что нужно доработать",
+            demo_business_name: "Название бизнеса", demo_city: "Город", demo_phone: "Телефон", demo_vk: "Ссылка VK", demo_email: "Email",
+            demo_address: "Адрес бизнеса", demo_domain: "Желаемый домен", demo_referrer: "Как вы нас нашли?", demo_budget: "Примерный бюджет",
+            demo_existing_site: "Ваш текущий сайт", demo_notes: "Дополнительные пожелания", demo_has_hosting: "У меня уже есть хостинг и домен",
+            consult_name: "Ваше имя", consult_email: "Email", consult_phone: "Телефон", consult_vk: "Ссылка VK", consult_message: "Ваш вопрос",
+            review_name: "Ваше имя", review_text: "Ваш отзыв",
+            agree_label: "Я ознакомлен и согласен с <a href='#' id='agreePolicyLink'>Пользовательским соглашением</a> и <a href='#' id='agreeRefundLink'>Политикой возвратов</a>",
+            send_btn: "Отправить", send_copy: "Отправить копию заявки на email", fill_from_vk: "Заполнить из VK",
+            demo_modal_title: "Получить демо сайт", consult_modal_title: "Заявка на консультацию", review_modal_title: "Оставить отзыв",
+            policy_title: "Пользовательское соглашение", refund_title: "Политика возвратов", exit_title: "Не уходите!", exit_text: "Оставьте заявку и получите скидку 10% на любой пакет.", exit_btn: "Получить скидку",
+            consent_title: "❗ Важное уведомление", consent_desc: "Для использования сайта и отправки заявок необходимо ознакомиться и согласиться с условиями:",
+            consent_policy: "Пользовательское соглашение", consent_refund: "Политика возвратов", consent_checkbox: "Я принимаю условия", consent_accept: "Продолжить", consent_warning: "Без принятия условий отправка заявок невозможна.",
+            admin_title: "Панель администратора", cookie_text: "Мы используем cookies для улучшения работы сайта. Продолжая, вы соглашаетесь с этим.",
+            footer_policy: "Пользовательское соглашение", footer_refund: "Политика возвратов", footer_copyright: "© 2025 Unique Web Studio. Все права защищены.",
+            tab_dashboard: "Дашборд", tab_leads: "Лиды", tab_analytics: "📊 Аналитика", tab_seo: "🔍 SEO", tab_backup: "💾 Резервное копирование", tab_notifications: "🔔 Уведомления", tab_followup: "⏰ Фоллоу-ап", tab_scraper: "🤖 Сбор лидов", tab_tickets: "🎫 Тикеты", tab_settings: "⚙️ Настройки", tab_logs: "📜 Логи", tab_editor: "✏️ Редактор текстов",
+            stats_total: "Всего лидов", stats_new: "Новых", stats_sent: "Отправлено", stats_paid: "Оплачено", payment_title: "Отправить данные оплаты",
+            lead_details_title: "Детали лида",
+            demo_business_name_label: "Название бизнеса", demo_business_name_desc: "Название вашей компании или проекта",
+            demo_city_label: "Город", demo_city_desc: "Где находится ваш бизнес",
+            demo_category_label: "Тип сайта", demo_category_desc: "Выберите тип необходимого сайта",
+            demo_category_landing: "Лендинг (от 6 000 ₽)", demo_category_ecommerce: "Интернет-магазин (от 12 000 ₽)", demo_category_corporate: "Корпоративный сайт (от 9 000 ₽)",
+            demo_phone_label: "Номер телефона", demo_phone_desc: "Для быстрой связи",
+            demo_vk_label: "VK профиль / страница", demo_vk_desc: "Ссылка на вашу страницу VK (необязательно, поможет понять ваш стиль)",
+            demo_email_label: "Email адрес", demo_email_desc: "Сюда мы отправим демо-ссылку",
+            demo_address_label: "Адрес бизнеса", demo_address_desc: "Если у вас есть физический адрес",
+            demo_brand_color_label: "Фирменный цвет", demo_brand_color_desc: "Основной цвет вашего бренда",
+            demo_logo_label: "Логотип (необязательно)", demo_logo_desc: "Загрузите ваш логотип (PNG, JPG)",
+            demo_domain_label: "Желаемый домен", demo_domain_desc: "Если у вас уже есть домен",
+            demo_referrer_label: "Как вы нас нашли?", demo_referrer_desc: "Помогите нам улучшить маркетинг",
+            demo_referrer_select: "-- Выберите --", demo_referrer_vk: "VK", demo_referrer_telegram: "Telegram", demo_referrer_search: "Поисковая система", demo_referrer_friend: "Совет друга", demo_referrer_other: "Другое",
+            demo_budget_label: "Примерный бюджет", demo_budget_desc: "Чтобы мы могли предложить лучшее решение",
+            demo_existing_site_label: "Текущий сайт (если есть)", demo_existing_site_desc: "Если у вас уже есть сайт, мы можем его обновить",
+            demo_hosting_label: "Статус хостинга и домена", demo_hosting_desc: "Сообщите, есть ли у вас хостинг",
+            demo_notes_label: "Дополнительные пожелания", demo_notes_desc: "Что еще нам стоит знать?",
+            portfolio_items: { "Студия красоты": "Студия красоты", "Магазин одежды": "Магазин одежды", "Ресторан": "Ресторан", "IT-компания": "IT-компания", "Мебельный магазин": "Мебельный магазин", "Маркетинговое агентство": "Маркетинговое агентство" },
+            blog_posts: [
+                { title: "Как выбрать Landing Page для бизнеса", excerpt: "Советы по выбору одностраничного сайта.", 
+                  content: "Одностраничный сайт (Landing Page) — это идеальное решение для бизнеса, которому нужно быстро привлечь клиентов и собрать заявки. В этой статье мы расскажем, на что обратить внимание при выборе лендинга: чёткая структура, призыв к действию, скорость загрузки, адаптивность под мобильные устройства. Убедитесь, что дизайн соответствует вашему бренду, а форма захвата контактов проста и заметна." },
+                { title: "SEO оптимизация: что нужно знать", excerpt: "Основные принципы продвижения.",
+                  content: "SEO (поисковая оптимизация) — это комплекс мер для повышения позиций сайта в результатах поиска. Ключевые элементы: правильная структура URL, метатеги (title, description), уникальные тексты, внутренняя перелинковка, адаптивный дизайн и скорость загрузки. Для регионального бизнеса важно добавить адрес и телефон, а также зарегистрироваться в Яндекс.Бизнес." },
+                { title: "Тренды веб-дизайна 2025", excerpt: "Новые стили и технологии.",
+                  content: "В 2025 году в веб-дизайне доминируют минимализм с крупной типографикой, 3D-элементы, микроанимация, тёмный режим и экологичные оттенки. Также растёт популярность голосового поиска, нейросетевых интерфейсов и персонализированного контента. Важно следить за трендами, но не забывать об удобстве пользователей (UX) и быстродействии." }
+            ],
+            services: [
+                { title: "Landing Page", desc: "Одностраничный сайт с высокой конверсией для вашего бизнеса.", price: "от 6 000 ₽", btn: "Заказать" },
+                { title: "Интернет-магазин", desc: "Полноценная платформа для продаж с корзиной и оплатой.", price: "от 12 000 ₽", btn: "Заказать" },
+                { title: "Корпоративный сайт", desc: "Представительский сайт с уникальным дизайном.", price: "от 9 000 ₽", btn: "Заказать" },
+                { title: "Редактирование сайта", desc: "Внесение изменений, доработка функционала, обновление контента.", price: "от 3 000 ₽", btn: "Заказать" }
+            ]
+        },
+        en: {
+            nav_services: "Services", nav_portfolio: "Portfolio", nav_blog: "Blog", nav_reviews: "Reviews", nav_contact: "Contacts",
+            hero_title: "We create websites that work for you", hero_desc: "Modern design, high conversion, full support. Order your website today.",
+            hero_demo_btn: "Get demo", hero_consult_btn: "Request consultation",
+            services_title: "Our Services", portfolio_title: "Our Projects", blog_title: "Blog", reviews_title: "Client Reviews",
+            edit_title: "Order website edit", contact_title: "Contacts",
+            filter_all: "All", filter_landing: "Landings", filter_shop: "Shops", filter_corp: "Corporate", search_placeholder: "Search...",
+            add_review_btn: "Leave a review",
+            edit_name: "Your name", edit_email: "Email", edit_phone: "Phone", edit_vk: "VK link", edit_site: "Website URL",
+            edit_type: "Edit type", edit_type_design: "Design", edit_type_function: "Functionality", edit_type_content: "Content", edit_type_other: "Other",
+            edit_desired_date: "Desired date", edit_desc: "Describe what needs improvement",
+            demo_business_name: "Business name", demo_city: "City", demo_phone: "Phone", demo_vk: "VK link", demo_email: "Email",
+            demo_address: "Business address", demo_domain: "Desired domain", demo_referrer: "How did you find us?", demo_budget: "Budget",
+            demo_existing_site: "Your current site", demo_notes: "Additional wishes", demo_has_hosting: "I have hosting and domain",
+            consult_name: "Your name", consult_email: "Email", consult_phone: "Phone", consult_vk: "VK link", consult_message: "Your question",
+            review_name: "Your name", review_text: "Your review",
+            agree_label: "I agree to the <a href='#' id='agreePolicyLink'>Terms of Use</a> and <a href='#' id='agreeRefundLink'>Refund Policy</a>",
+            send_btn: "Submit", send_copy: "Send copy to email", fill_from_vk: "Fill from VK",
+            demo_modal_title: "Get demo site", consult_modal_title: "Consultation request", review_modal_title: "Leave a review",
+            policy_title: "Terms of Use", refund_title: "Refund Policy", exit_title: "Don't go!", exit_text: "Leave a request and get 10% discount.", exit_btn: "Get discount",
+            consent_title: "❗ Important notice", consent_desc: "To use the site you must agree to the terms:",
+            consent_policy: "Terms of Use", consent_refund: "Refund Policy", consent_checkbox: "I accept", consent_accept: "Continue", consent_warning: "Without acceptance, requests cannot be sent.",
+            admin_title: "Admin Panel", cookie_text: "We use cookies to improve your experience.",
+            footer_policy: "Terms of Use", footer_refund: "Refund Policy", footer_copyright: "© 2025 Unique Web Studio. All rights reserved.",
+            tab_dashboard: "Dashboard", tab_leads: "Leads", tab_analytics: "📊 Analytics", tab_seo: "🔍 SEO", tab_backup: "💾 Backup", tab_notifications: "🔔 Notifications", tab_followup: "⏰ Follow-up", tab_scraper: "🤖 Lead scraper", tab_tickets: "🎫 Tickets", tab_settings: "⚙️ Settings", tab_logs: "📜 Logs", tab_editor: "✏️ Text Editor",
+            stats_total: "Total leads", stats_new: "New", stats_sent: "Sent", stats_paid: "Paid", payment_title: "Submit payment details",
+            lead_details_title: "Lead Details",
+            demo_business_name_label: "Business name", demo_business_name_desc: "Your company or project name",
+            demo_city_label: "City", demo_city_desc: "Where your business is located",
+            demo_category_label: "Website type", demo_category_desc: "Choose the type of website you need",
+            demo_category_landing: "Landing Page (from 6,000 ₽)", demo_category_ecommerce: "Online Store (from 12,000 ₽)", demo_category_corporate: "Corporate Website (from 9,000 ₽)",
+            demo_phone_label: "Phone number", demo_phone_desc: "For quick contact",
+            demo_vk_label: "VK profile / page", demo_vk_desc: "Link to your VK page (optional, helps us understand your style)",
+            demo_email_label: "Email address", demo_email_desc: "We'll send the demo link here",
+            demo_address_label: "Business address", demo_address_desc: "If you have a physical location",
+            demo_brand_color_label: "Brand color", demo_brand_color_desc: "Main color of your brand",
+            demo_logo_label: "Logo (optional)", demo_logo_desc: "Upload your logo (PNG, JPG)",
+            demo_domain_label: "Desired domain", demo_domain_desc: "If you already have a domain name in mind",
+            demo_referrer_label: "How did you find us?", demo_referrer_desc: "Help us improve our marketing",
+            demo_referrer_select: "-- Select --", demo_referrer_vk: "VK", demo_referrer_telegram: "Telegram", demo_referrer_search: "Search engine", demo_referrer_friend: "Friend recommendation", demo_referrer_other: "Other",
+            demo_budget_label: "Approximate budget", demo_budget_desc: "So we can offer the best solution",
+            demo_existing_site_label: "Current website (if any)", demo_existing_site_desc: "If you already have a site, we can redesign it",
+            demo_hosting_label: "Hosting & domain status", demo_hosting_desc: "Let us know if you already have hosting",
+            demo_notes_label: "Additional notes", demo_notes_desc: "Anything else we should know?",
+            portfolio_items: { "Студия красоты": "Beauty Studio", "Магазин одежды": "Clothing Store", "Ресторан": "Restaurant", "IT-компания": "IT Company", "Мебельный магазин": "Furniture Store", "Маркетинговое агентство": "Marketing Agency" },
+            blog_posts: [
+                { title: "How to choose a Landing Page for business", excerpt: "Tips for choosing a one-page website.",
+                  content: "A landing page is an ideal solution for businesses that need to quickly attract customers and collect leads. In this article, we discuss key aspects: clear structure, call-to-action, loading speed, mobile responsiveness. Ensure the design matches your brand and the contact form is simple and visible." },
+                { title: "SEO optimization: what you need to know", excerpt: "Basic principles of promotion.",
+                  content: "SEO is a set of practices to improve your website's search engine rankings. Core elements: proper URL structure, meta tags (title, description), unique content, internal linking, responsive design, and fast loading. For local businesses, adding address and phone number and registering with Yandex.Business is crucial." },
+                { title: "Web design trends 2025", excerpt: "New styles and technologies.",
+                  content: "In 2025, web design trends include minimalism with large typography, 3D elements, micro-animations, dark mode, and earthy tones. Voice search, AI‑driven interfaces, and personalized content are also gaining traction. Keep up with trends but prioritize user experience (UX) and performance." }
+            ],
+            services: [
+                { title: "Landing Page", desc: "High-converting one-page website for your business.", price: "from 6,000 ₽", btn: "Order" },
+                { title: "Online Store", desc: "Full e-commerce platform with cart and payment.", price: "from 12,000 ₽", btn: "Order" },
+                { title: "Corporate Website", desc: "Corporate site with unique design.", price: "from 9,000 ₽", btn: "Order" },
+                { title: "Website Editing", desc: "Making changes, functionality improvements, content updates.", price: "from 3,000 ₽", btn: "Order" }
+            ]
         }
-        lastLeadCount = leadsData.length;
+    };
+
+    // ========== CUSTOM EMBEDDED SVG IMAGES (NO EXTERNAL LINKS) ==========
+    const serviceSvgs = {
+        "Landing Page": `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="25" width="60" height="50" rx="10" fill="#F5EDE0" stroke="#C8A96A" stroke-width="2.5"/><rect x="30" y="35" width="40" height="5" fill="#C8A96A"/><rect x="30" y="45" width="30" height="5" fill="#A67B5A"/><rect x="30" y="55" width="35" height="5" fill="#A67B5A"/><path d="M70 60 L80 50 L83 53 L73 63 Z" fill="#C8A96A"/><circle cx="78" cy="56" r="3" fill="#fff"/></svg>`,
+        "Интернет-магазин": `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="30" width="70" height="50" rx="10" fill="#F5EDE0" stroke="#C8A96A" stroke-width="2.5"/><circle cx="35" cy="70" r="8" fill="#A67B5A"/><circle cx="65" cy="70" r="8" fill="#A67B5A"/><path d="M25 35 L30 60 L70 60 L75 35 L25 35Z" fill="#C8A96A" opacity="0.5"/><rect x="45" y="15" width="10" height="22" fill="#D6C6B0"/><path d="M48 15 L50 8 L52 15" fill="#C8A96A"/><line x1="28" y1="45" x2="72" y2="45" stroke="#A67B5A" stroke-width="2"/></svg>`,
+        "Корпоративный сайт": `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="20" width="70" height="60" rx="10" fill="#F5EDE0" stroke="#C8A96A" stroke-width="2.5"/><rect x="25" y="30" width="50" height="5" fill="#C8A96A"/><rect x="25" y="40" width="50" height="5" fill="#C8A96A"/><rect x="25" y="50" width="50" height="5" fill="#C8A96A"/><rect x="25" y="60" width="30" height="5" fill="#A67B5A"/><circle cx="70" cy="25" r="8" fill="#C8A96A"/><path d="M67 25 L69 27 L73 23" stroke="#fff" stroke-width="2"/></svg>`,
+        "Редактирование сайта": `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="25" width="60" height="50" rx="10" fill="#F5EDE0" stroke="#C8A96A" stroke-width="2.5"/><rect x="30" y="35" width="40" height="4" fill="#C8A96A"/><rect x="30" y="45" width="30" height="4" fill="#A67B5A"/><rect x="30" y="55" width="25" height="4" fill="#A67B5A"/><path d="M65 50 L80 35 L84 39 L69 54 Z" fill="#C8A96A"/><circle cx="76" cy="42" r="4" fill="#fff"/><path d="M67 56 L73 62" stroke="#C8A96A" stroke-width="3"/></svg>`
+    };
+
+    const portfolioSvgs = {
+        "Студия красоты": `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="40" r="18" fill="#C8A96A" opacity="0.3"/><path d="M50 18 L58 32 L42 32 Z" fill="#C8A96A"/><path d="M38 55 L62 55 L56 70 L44 70 Z" fill="#A67B5A"/><rect x="47" y="70" width="6" height="15" fill="#D6C6B0"/><circle cx="50" cy="88" r="5" fill="#C8A96A"/><path d="M50 50 L50 60" stroke="#C8A96A" stroke-width="2"/></svg>`,
+        "Магазин одежды": `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M35 25 L65 25 L72 45 L28 45 Z" fill="#C8A96A"/><rect x="33" y="45" width="34" height="35" rx="5" fill="#F5EDE0" stroke="#A67B5A" stroke-width="2"/><line x1="43" y1="45" x2="43" y2="80" stroke="#A67B5A" stroke-width="2"/><line x1="57" y1="45" x2="57" y2="80" stroke="#A67B5A" stroke-width="2"/><circle cx="50" cy="62" r="10" fill="#C8A96A" opacity="0.6"/></svg>`,
+        "Ресторан": `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="40" width="40" height="35" rx="8" fill="#F5EDE0" stroke="#C8A96A" stroke-width="2"/><line x1="42" y1="40" x2="42" y2="75" stroke="#A67B5A" stroke-width="2"/><line x1="58" y1="40" x2="58" y2="75" stroke="#A67B5A" stroke-width="2"/><path d="M35 32 L65 32" stroke="#C8A96A" stroke-width="3"/><circle cx="50" cy="57" r="8" fill="#C8A96A" opacity="0.5"/></svg>`,
+        "IT-компания": `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="30" width="50" height="40" rx="8" fill="#F5EDE0" stroke="#C8A96A" stroke-width="2"/><rect x="38" y="42" width="24" height="14" fill="#C8A96A" opacity="0.5"/><circle cx="50" cy="70" r="8" fill="#A67B5A"/><path d="M30 20 L70 20 L65 28 L35 28 Z" fill="#C8A96A"/><line x1="50" y1="30" x2="50" y2="42" stroke="#A67B5A" stroke-width="2"/></svg>`,
+        "Мебельный магазин": `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="45" width="40" height="25" rx="6" fill="#F5EDE0" stroke="#C8A96A" stroke-width="2"/><rect x="38" y="30" width="24" height="18" fill="#C8A96A" opacity="0.5"/><rect x="42" y="70" width="16" height="15" fill="#A67B5A"/><circle cx="38" cy="88" r="5" fill="#C8A96A"/><circle cx="62" cy="88" r="5" fill="#C8A96A"/></svg>`,
+        "Маркетинговое агентство": `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25 65 L45 40 L58 53 L78 28" stroke="#C8A96A" stroke-width="4" fill="none"/><circle cx="25" cy="65" r="7" fill="#C8A96A"/><circle cx="45" cy="40" r="7" fill="#A67B5A"/><circle cx="58" cy="53" r="7" fill="#D6C6B0"/><circle cx="78" cy="28" r="7" fill="#C8A96A"/><line x1="50" y1="72" x2="50" y2="85" stroke="#A67B5A" stroke-width="3"/></svg>`
+    };
+
+    const blogSvg = `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="25" width="50" height="55" rx="8" fill="#F5EDE0" stroke="#C8A96A" stroke-width="2.5"/><line x1="35" y1="38" x2="65" y2="38" stroke="#C8A96A" stroke-width="2"/><line x1="35" y1="48" x2="65" y2="48" stroke="#A67B5A" stroke-width="2"/><line x1="35" y1="58" x2="65" y2="58" stroke="#A67B5A" stroke-width="2"/><line x1="35" y1="68" x2="55" y2="68" stroke="#A67B5A" stroke-width="2"/><circle cx="75" cy="30" r="10" fill="#C8A96A"/><text x="72" y="36" font-size="14" fill="#fff" font-weight="bold">!</text></svg>`;
+
+    // Load custom translations from localStorage
+    function loadCustomTranslations() {
+        const customRu = localStorage.getItem('custom_translations_ru');
+        const customEn = localStorage.getItem('custom_translations_en');
+        if (customRu) {
+            const parsed = JSON.parse(customRu);
+            Object.assign(translations.ru, parsed);
+        }
+        if (customEn) {
+            const parsed = JSON.parse(customEn);
+            Object.assign(translations.en, parsed);
+        }
     }
-    if (Notification.permission !== 'denied') Notification.requestPermission();
+    loadCustomTranslations();
 
-    // Translations (keep existing)
-    let translations = { /* ... same as before, omitted for brevity but must be included */ };
-    // For brevity, we assume the existing translations object is present. In real output, we include full translations.
-    // (To save space, we keep the previous translations object exactly as in the original code.)
+    // ==================== REVIEWS ====================
+    let reviews = JSON.parse(localStorage.getItem('reviews')) || [
+        { name_ru: "Анна", name_en: "Anna", rating: 5, text_ru: "Отличный сервис, сайт сделали за 2 дня! Очень рекомендую.", text_en: "Great service, the site was made in 2 days! Highly recommend.", date: "2025-03-15", approved: true, service_ru: "Интернет-магазин", service_en: "Online Store", amount: 15000 },
+        { name_ru: "Иван", name_en: "Ivan", rating: 5, text_ru: "Профессиональный подход, всё объяснили и сделали качественно. Сайт работает отлично.", text_en: "Professional approach, explained everything and did quality work. The site works great.", date: "2025-03-20", approved: true, service_ru: "Корпоративный сайт", service_en: "Corporate Website", amount: 12000 },
+        { name_ru: "Мария", name_en: "Maria", rating: 5, text_ru: "Хорошая студия, сайт работает отлично. Были мелкие недочёты, но быстро исправили.", text_en: "Good studio, the site works great. There were minor issues, but they fixed them quickly.", date: "2025-03-25", approved: true, service_ru: "Лендинг", service_en: "Landing Page", amount: 8000 },
+        { name_ru: "Дмитрий", name_en: "Dmitry", rating: 5, text_ru: "Заказал интернет-магазин. Всё сделали в срок, дизайн супер! Спасибо команде.", text_en: "Ordered an online store. Everything was done on time, design is super! Thanks to the team.", date: "2025-03-28", approved: true, service_ru: "Интернет-магазин", service_en: "Online Store", amount: 25000 },
+        { name_ru: "Екатерина", name_en: "Ekaterina", rating: 5, text_ru: "Лендинг для моего бизнеса принёс первые заказы уже через неделю. Очень довольна!", text_en: "The landing page for my business brought the first orders within a week. Very satisfied!", date: "2025-04-01", approved: true, service_ru: "Лендинг", service_en: "Landing Page", amount: 6000 },
+        { name_ru: "Сергей", name_en: "Sergey", rating: 5, text_ru: "Корпоративный сайт сделали с нуля. Удобная админка, современный дизайн. Рекомендую.", text_en: "Corporate website made from scratch. Convenient admin panel, modern design. I recommend.", date: "2025-04-03", approved: true, service_ru: "Корпоративный сайт", service_en: "Corporate Website", amount: 14000 },
+        { name_ru: "Ольга", name_en: "Olga", rating: 5, text_ru: "Сайт для ресторана: меню, бронирование столиков, всё работает идеально. Спасибо!", text_en: "Website for a restaurant: menu, table reservation, everything works perfectly. Thanks!", date: "2025-04-05", approved: true, service_ru: "Лендинг", service_en: "Landing Page", amount: 7500 },
+        { name_ru: "Алексей", name_en: "Alexey", rating: 5, text_ru: "Магазин на готовом решении, но ребята доработали под нас. Клиенты довольны.", text_en: "Store on a ready-made solution, but the guys customized it for us. Customers are happy.", date: "2025-04-06", approved: true, service_ru: "Интернет-магазин", service_en: "Online Store", amount: 18000 }
+    ];
 
-    // ========== HELPER FUNCTIONS ==========
-    function applyLanguage(lang) { /* existing code */ }
-    function renderServices() { /* existing code */ }
-    function renderPortfolio(filter, search) { /* existing code */ }
-    function renderBlog() { /* existing code */ }
-    function renderReviews() { /* existing code */ }
-    function openModal(id) { /* existing code */ }
-    function closeAllModals() { /* existing code */ }
-    function attachPolicyLinks(prefix) { /* existing code */ }
-    function escapeHtml(str) { return String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+    function renderReviews() {
+        const wrapper = document.getElementById('reviewsSwiperWrapper');
+        if(!wrapper) return;
+        wrapper.innerHTML = '';
+        const lang = currentLang;
+        reviews.filter(r=>r.approved).forEach(rev => {
+            let stars = '';
+            for(let i=1;i<=5;i++) stars += i<=rev.rating ? '★' : '☆';
+            const name = lang === 'ru' ? rev.name_ru : rev.name_en;
+            const text = lang === 'ru' ? rev.text_ru : rev.text_en;
+            const service = lang === 'ru' ? rev.service_ru : rev.service_en;
+            const amount = rev.amount ? `${rev.amount.toLocaleString()} ₽` : '';
+            const slide = document.createElement('div');
+            slide.className = 'swiper-slide';
+            slide.innerHTML = `
+                <div class="testimonial-card">
+                    <strong>${escapeHtml(name)}</strong>
+                    <div class="stars">${stars}</div>
+                    <p>${escapeHtml(text)}</p>
+                    <div>
+                        <span class="service-badge"><i class="fas fa-tag"></i> ${escapeHtml(service)}</span>
+                        ${amount ? `<span class="amount-badge"><i class="fas fa-ruble-sign"></i> ${escapeHtml(amount)}</span>` : ''}
+                    </div>
+                    <div class="review-date">${rev.date || ''}</div>
+                </div>
+            `;
+            wrapper.appendChild(slide);
+        });
+        new Swiper('.reviews-swiper',{loop:true,pagination:{el:'.swiper-pagination',clickable:true},autoplay:{delay:4000}});
+    }
+
+    // ==================== HELPER FUNCTIONS ====================
+    function applyLanguage(lang) {
+        currentLang = lang;
+        const t = translations[lang];
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if(t[key]) {
+                if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = t[key];
+                else el.innerHTML = t[key];
+            }
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if(t[key]) el.placeholder = t[key];
+        });
+        const isRu = (lang === 'ru');
+        document.querySelector('.consent-title-ru').style.display = isRu ? 'block' : 'none';
+        document.querySelector('.consent-title-en').style.display = isRu ? 'none' : 'block';
+        document.querySelector('.consent-desc-ru').style.display = isRu ? 'block' : 'none';
+        document.querySelector('.consent-desc-en').style.display = isRu ? 'none' : 'block';
+        document.querySelector('.consent-checkbox-ru').style.display = isRu ? 'inline' : 'none';
+        document.querySelector('.consent-checkbox-en').style.display = isRu ? 'none' : 'inline';
+        document.getElementById('acceptConsent').style.display = isRu ? 'inline-flex' : 'none';
+        document.getElementById('acceptConsentEn').style.display = isRu ? 'none' : 'inline-flex';
+        document.querySelector('.consent-warning-ru').style.display = isRu ? 'block' : 'none';
+        document.querySelector('.consent-warning-en').style.display = isRu ? 'none' : 'block';
+        document.getElementById('policyLink').innerText = t.footer_policy;
+        document.getElementById('refundLink').innerText = t.footer_refund;
+        const policyTitle = document.querySelector('#policyModal h3');
+        const refundTitle = document.querySelector('#refundModal h3');
+        if(policyTitle) policyTitle.innerText = t.policy_title;
+        if(refundTitle) refundTitle.innerText = t.refund_title;
+        renderServices();
+        renderPortfolio(currentFilter, document.getElementById('portfolioSearch')?.value||'');
+        renderBlog();
+        renderReviews();
+        document.documentElement.lang = lang;
+        localStorage.setItem('lang', lang);
+        if(document.getElementById('adminPanel').classList.contains('open')) renderActiveTab();
+    }
+
+    function renderServices() {
+        const container = document.getElementById('servicesGrid');
+        if(!container) return;
+        const t = translations[currentLang];
+        const services = t.services;
+        container.innerHTML = services.map((s, idx) => {
+            const svg = serviceSvgs[s.title] || serviceSvgs["Landing Page"];
+            return `
+                <div class="service-card" data-aos="zoom-in" data-service-name="${s.title}">
+                    <div class="service-img-svg">${svg}</div>
+                    <div class="content"><h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p><div class="price">${escapeHtml(s.price)}</div><button class="btn order-service-btn" data-service="${escapeHtml(s.title)}">${escapeHtml(s.btn)}</button></div>
+                </div>
+            `;
+        }).join('');
+        document.querySelectorAll('.order-service-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const serviceName = btn.getAttribute('data-service');
+                openOrderServiceModal(serviceName);
+            });
+        });
+    }
+
+    function openOrderServiceModal(serviceName) {
+        document.getElementById('orderServiceName').value = serviceName;
+        document.getElementById('orderName').value = '';
+        document.getElementById('orderEmail').value = '';
+        document.getElementById('orderPhone').value = '';
+        document.getElementById('orderMessage').value = '';
+        document.getElementById('orderAgree').checked = false;
+        openModal('orderService');
+    }
+
+    const portfolioRaw = [
+        { ru: "Студия красоты", category: "landing", svgKey: "Студия красоты" },
+        { ru: "Магазин одежды", category: "shop", svgKey: "Магазин одежды" },
+        { ru: "Ресторан", category: "landing", svgKey: "Ресторан" },
+        { ru: "IT-компания", category: "corp", svgKey: "IT-компания" },
+        { ru: "Мебельный магазин", category: "shop", svgKey: "Мебельный магазин" },
+        { ru: "Маркетинговое агентство", category: "corp", svgKey: "Маркетинговое агентство" }
+    ];
+    let currentFilter='all';
+    function renderPortfolio(filter='all', search='') {
+        const grid = document.getElementById('portfolioGrid');
+        if(!grid) return;
+        const t = translations[currentLang];
+        const filtered = portfolioRaw.filter(item => (filter==='all'||item.category===filter) && (t.portfolio_items[item.ru]||item.ru).toLowerCase().includes(search.toLowerCase()));
+        grid.innerHTML = filtered.map(item => {
+            const svg = portfolioSvgs[item.ru] || portfolioSvgs["Студия красоты"];
+            return `<div class="portfolio-card"><div class="portfolio-img-svg">${svg}<br>${escapeHtml(t.portfolio_items[item.ru]||item.ru)}</div></div>`;
+        }).join('');
+    }
     
-    // ========== ENHANCED LEAD DETAILS WITH FOLLOW-UP ==========
+    function renderBlog() {
+        const grid = document.getElementById('blogGrid');
+        if(!grid) return;
+        const t = translations[currentLang];
+        const posts = t.blog_posts;
+        grid.innerHTML = posts.map((p, idx) => `
+            <div class="blog-card">
+                <div class="blog-img-svg">${blogSvg}<br>${escapeHtml(p.title)}</div>
+                <div class="content">
+                    <h3>${escapeHtml(p.title)}</h3>
+                    <p>${escapeHtml(p.excerpt)}</p>
+                    <button class="btn btn-outline read-blog-btn" data-idx="${idx}">${currentLang==='ru'?'Читать':'Read'}</button>
+                </div>
+            </div>
+        `).join('');
+        document.querySelectorAll('.read-blog-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(btn.getAttribute('data-idx'));
+                const post = translations[currentLang].blog_posts[idx];
+                if (post) {
+                    document.getElementById('blogModalTitle').innerText = post.title;
+                    document.getElementById('blogModalContent').innerHTML = `<p>${escapeHtml(post.content).replace(/\n/g, '<br>')}</p>`;
+                    openModal('blog');
+                }
+            });
+        });
+    }
+
+    let consentGiven = localStorage.getItem('consentAccepted')==='true';
+    function storeConsentRecord(){ localStorage.setItem('consentAccepted','true'); consentGiven=true; }
+    function requireConsentAndExecute(cb){ if(consentGiven) cb(); else { window.pendingConsentCallback=cb; openModal('consent'); } }
+    function onConsentAccepted(){ if(window.pendingConsentCallback){ let cb=window.pendingConsentCallback; window.pendingConsentCallback=null; cb(); } }
+    
+    function openModal(id){ 
+        const modal = document.getElementById(id+'Modal');
+        if(modal) modal.style.display='flex'; 
+        else console.warn('Modal not found:', id+'Modal');
+    }
+    function closeAllModals(){ document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); }
+    
+    function attachPolicyLinks(prefix){
+        const p=document.getElementById(`${prefix}PolicyLink`);
+        const r=document.getElementById(`${prefix}RefundLink`);
+        if(p) p.addEventListener('click',(e)=>{e.preventDefault(); e.stopPropagation(); openModal('policy');});
+        if(r) r.addEventListener('click',(e)=>{e.preventDefault(); e.stopPropagation(); openModal('refund');});
+    }
+    
+    attachPolicyLinks('demo');
+    attachPolicyLinks('consult');
+    attachPolicyLinks('review');
+    attachPolicyLinks('edit');
+    attachPolicyLinks('consent');
+    attachPolicyLinks('agree');
+    attachPolicyLinks('order');
+    
+    const policyLinkEl = document.getElementById('policyLink');
+    const refundLinkEl = document.getElementById('refundLink');
+    if(policyLinkEl) policyLinkEl.addEventListener('click',(e)=>{e.preventDefault(); e.stopPropagation(); openModal('policy');});
+    if(refundLinkEl) refundLinkEl.addEventListener('click',(e)=>{e.preventDefault(); e.stopPropagation(); openModal('refund');});
+    
+    document.body.addEventListener('click', (e) => {
+        const target = e.target.closest('a');
+        if(!target) return;
+        const id = target.id;
+        if(id && (id === 'policyLink' || id === 'demoPolicyLink' || id === 'consultPolicyLink' || id === 'reviewPolicyLink' || id === 'editPolicyLink' || id === 'consentPolicyLink' || id === 'orderPolicyLink')) {
+            e.preventDefault();
+            e.stopPropagation();
+            openModal('policy');
+        }
+        else if(id && (id === 'refundLink' || id === 'demoRefundLink' || id === 'consultRefundLink' || id === 'reviewRefundLink' || id === 'editRefundLink' || id === 'consentRefundLink' || id === 'orderRefundLink')) {
+            e.preventDefault();
+            e.stopPropagation();
+            openModal('refund');
+        }
+        else if(target.getAttribute('href') && (target.getAttribute('href') === '#policyModal' || target.getAttribute('href') === '#policy' || target.getAttribute('href') === '#terms')) {
+            e.preventDefault();
+            openModal('policy');
+        }
+        else if(target.getAttribute('href') && (target.getAttribute('href') === '#refundModal' || target.getAttribute('href') === '#refund')) {
+            e.preventDefault();
+            openModal('refund');
+        }
+    });
+    
+    document.getElementById('langSwitch').addEventListener('click',()=>{ const newLang=currentLang==='ru'?'en':'ru'; applyLanguage(newLang); document.getElementById('langSwitch').innerText=newLang==='ru'?'EN':'RU'; });
+    applyLanguage(currentLang);
+    document.getElementById('langSwitch').innerText=currentLang==='ru'?'EN':'RU';
+    const darkToggle=document.getElementById('darkModeToggle');
+    if(localStorage.getItem('darkMode')==='enabled') document.body.classList.add('dark');
+    darkToggle.addEventListener('click',()=>{ document.body.classList.toggle('dark'); localStorage.setItem('darkMode',document.body.classList.contains('dark')?'enabled':'disabled'); darkToggle.innerHTML=document.body.classList.contains('dark')?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>'; });
+    AOS.init({duration:800,once:true});
+    VanillaTilt.init(document.querySelectorAll(".service-card, .portfolio-card"),{max:10,speed:500,glare:true,"max-glare":0.4});
+    document.querySelectorAll('.filter-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); currentFilter=btn.getAttribute('data-filter'); renderPortfolio(currentFilter,document.getElementById('portfolioSearch').value); }); });
+    document.getElementById('portfolioSearch').addEventListener('input',e=>renderPortfolio(currentFilter,e.target.value));
+    renderPortfolio('all',''); renderBlog(); renderReviews();
+    let selectedRating=5;
+    document.getElementById('starRating')?.addEventListener('click',e=>{ if(e.target.tagName==='SPAN'){ const stars=[...document.querySelectorAll('#starRating span')]; const idx=stars.indexOf(e.target); selectedRating=idx+1; stars.forEach((s,i)=>s.innerText=i<selectedRating?'★':'☆'); } });
+    
+    document.querySelectorAll('.close-modal').forEach(btn=>{ btn.addEventListener('click',function(){ const modal=this.closest('.modal'); if(modal) modal.style.display='none'; }); });
+    window.addEventListener('click',e=>{ if(e.target.classList.contains('modal')&&e.target.id!=='consentModal') e.target.style.display='none'; });
+    document.getElementById('getDemoBtn').addEventListener('click',()=>requireConsentAndExecute(()=>openModal('demo')));
+    document.getElementById('consultBtn').addEventListener('click',()=>requireConsentAndExecute(()=>openModal('consult')));
+    document.getElementById('addReviewBtn').addEventListener('click',()=>requireConsentAndExecute(()=>openModal('review')));
+    document.getElementById('acceptConsent').addEventListener('click',()=>{ if(document.getElementById('consentAgree').checked){ storeConsentRecord(); document.getElementById('consentModal').style.display='none'; onConsentAccepted(); } else alert(translations[currentLang].consent_warning); });
+    document.getElementById('acceptConsentEn').addEventListener('click',()=>{ if(document.getElementById('consentAgree').checked){ storeConsentRecord(); document.getElementById('consentModal').style.display='none'; onConsentAccepted(); } else alert(translations[currentLang].consent_warning); });
+    if(!consentGiven) setTimeout(()=>openModal('consent'),200);
+    let exitShown=false;
+    document.addEventListener('mouseleave',e=>{ if(e.clientY<=0&&!exitShown&&!localStorage.getItem('exitShown')&&consentGiven){ exitShown=true; localStorage.setItem('exitShown','true'); openModal('exit'); } });
+    document.getElementById('exitBtn').addEventListener('click',()=>{ closeAllModals(); openModal('consult'); });
+    const scrollBtn=document.getElementById('scrollTop');
+    window.addEventListener('scroll',()=>scrollBtn.classList.toggle('visible',window.scrollY>300));
+    scrollBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+    document.querySelector('.mobile-menu').addEventListener('click',()=>document.querySelector('.nav').classList.toggle('active'));
+    document.querySelectorAll('.nav a').forEach(a=>a.addEventListener('click',()=>document.querySelector('.nav').classList.remove('active')));
+    document.querySelectorAll('a[href^="#"]').forEach(anchor=>{ anchor.addEventListener('click',function(e){ e.preventDefault(); const target=document.querySelector(this.getAttribute('href')); if(target) target.scrollIntoView({behavior:'smooth'}); }); });
+    if(!localStorage.getItem('cookiesAccepted')) document.getElementById('cookieConsent').style.display='flex';
+    document.getElementById('acceptCookies').addEventListener('click',()=>{ localStorage.setItem('cookiesAccepted','true'); document.getElementById('cookieConsent').style.display='none'; });
+    document.getElementById('reviewForm').addEventListener('submit',(e)=>{
+        e.preventDefault();
+        requireConsentAndExecute(()=>{
+            if(!document.getElementById('reviewAgree').checked){ alert(translations[currentLang].consent_warning); return; }
+            const name_ru = document.getElementById('reviewName').value;
+            const name_en = name_ru;
+            const text_ru = document.getElementById('reviewText').value;
+            const text_en = text_ru;
+            const amount = parseFloat(document.getElementById('reviewAmount').value);
+            if(name_ru && text_ru){
+                reviews.unshift({ 
+                    name_ru, name_en, 
+                    rating: selectedRating, 
+                    text_ru, text_en, 
+                    date: new Date().toISOString().slice(0,10), 
+                    approved: true, 
+                    service_ru: "Не указано", 
+                    service_en: "Not specified",
+                    amount: isNaN(amount) ? null : amount
+                });
+                localStorage.setItem('reviews', JSON.stringify(reviews));
+                renderReviews();
+                closeAllModals();
+            }
+        });
+    });
+    document.getElementById('fillFromVkBtn')?.addEventListener('click',()=>alert('Demo: VK data filled automatically'));
+
+    // ==================== FORM SUBMISSIONS TO APPS SCRIPT ====================
+    async function sendToAppsScript(formData, action) {
+        formData.append('action', action);
+        const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+        return await response.json();
+    }
+
+    // Update form submissions to include language field
+    document.getElementById('demoForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!document.getElementById('demoAgree').checked) { alert(translations[currentLang].consent_warning); return; }
+        const formData = new FormData(e.target);
+        const langSelect = document.getElementById('demoLanguage');
+        if(langSelect) formData.append('Preferred Language', langSelect.value);
+        try {
+            const result = await sendToAppsScript(formData, 'demoRequest');
+            if (result.success) {
+                alert(`✅ ${translations[currentLang].send_btn} ID: ${result.lead_id}`);
+                localStorage.setItem('last_lead_id', result.lead_id);
+                closeAllModals();
+                e.target.reset();
+            } else alert('❌ ' + result.message);
+        } catch(err) { alert('Network error'); }
+    });
+    document.getElementById('consultForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!document.getElementById('consultAgree').checked) { alert(translations[currentLang].consent_warning); return; }
+        const formData = new FormData(e.target);
+        const langSelect = document.getElementById('consultLanguage');
+        if(langSelect) formData.append('Preferred Language', langSelect.value);
+        try {
+            const result = await sendToAppsScript(formData, 'consultRequest');
+            if (result.success) alert(`✅ ${translations[currentLang].send_btn}`);
+            else alert('❌ ' + result.message);
+            closeAllModals();
+            e.target.reset();
+        } catch(err) { alert('Network error'); }
+    });
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!document.getElementById('editAgree').checked) { alert(translations[currentLang].consent_warning); return; }
+        const formData = new FormData(e.target);
+        const langSelect = document.getElementById('editLanguage');
+        if(langSelect) formData.append('Preferred Language', langSelect.value);
+        try {
+            const result = await sendToAppsScript(formData, 'editRequest');
+            if (result.success) alert(`✅ ${translations[currentLang].send_btn}`);
+            else alert('❌ ' + result.message);
+            document.getElementById('editForm').reset();
+        } catch(err) { alert('Network error'); }
+    });
+    document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!document.getElementById('paymentAgree').checked) { alert(translations[currentLang].consent_warning); return; }
+        const formData = new FormData();
+        formData.append('lead_id', document.getElementById('paymentLeadId').value);
+        formData.append('transaction_id', document.getElementById('paymentTransactionId').value);
+        formData.append('amount', document.getElementById('paymentAmount').value);
+        try {
+            const result = await sendToAppsScript(formData, 'submitPayment');
+            if (result.success) alert('✅ Payment info submitted. Awaiting confirmation.');
+            else alert('❌ ' + result.message);
+            closeAllModals();
+            e.target.reset();
+        } catch(err) { alert('Network error'); }
+    });
+
+    document.getElementById('orderServiceForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!document.getElementById('orderAgree').checked) { alert(translations[currentLang].consent_warning); return; }
+        const formData = new FormData();
+        formData.append('service', document.getElementById('orderServiceName').value);
+        formData.append('name', document.getElementById('orderName').value);
+        formData.append('email', document.getElementById('orderEmail').value);
+        formData.append('phone', document.getElementById('orderPhone').value);
+        formData.append('message', document.getElementById('orderMessage').value);
+        const langSelect = document.getElementById('orderLanguage');
+        if(langSelect) formData.append('Preferred Language', langSelect.value);
+        try {
+            const result = await sendToAppsScript(formData, 'serviceOrder');
+            if (result.success) alert(`✅ Order submitted! We'll contact you soon.`);
+            else alert('❌ ' + result.message);
+            closeAllModals();
+            e.target.reset();
+        } catch(err) { alert('Network error'); }
+    });
+
+    async function confirmPayment(leadId) {
+        if (!confirm(`Confirm payment for lead ${leadId}? This will mark it as paid and (optionally) trigger site generation.`)) return;
+        const formData = new FormData();
+        formData.append('action', 'confirmPayment');
+        formData.append('lead_id', leadId);
+        formData.append('site_url', '');
+        formData.append('site_password', '');
+        try {
+            const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+            const result = await response.json();
+            if (result.success) {
+                alert('✅ Payment confirmed! Refresh the page to see updated status.');
+                await renderLeadsTable();
+            } else {
+                alert('❌ ' + result.message);
+            }
+        } catch(err) {
+            alert('Network error');
+        }
+    }
+
+    // IMPROVED: showLeadDetailsById - displays ALL fields with better formatting, color preview, clickable links
     function showLeadDetailsById(leadId) {
         const lead = leadsData.find(l => String(l['Lead ID']) === String(leadId));
-        if (!lead) { alert('Lead not found'); return; }
+        if (!lead) {
+            alert('Lead not found');
+            return;
+        }
         const container = document.getElementById('leadDetailsContent');
         if (!container) return;
+        
+        const val = (key, defaultValue = '—') => {
+            const v = lead[key];
+            if (v === undefined || v === null || v === '') return defaultValue;
+            return v;
+        };
+        
+        // Helper to format value with clickable links and color preview
+        const formatValue = (key, value) => {
+            if (value === '—' || value === '') return value;
+            const lowerKey = key.toLowerCase();
+            // Color preview for brand color
+            if ((lowerKey.includes('color') || lowerKey === 'brand color') && value.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) {
+                return `<span class="color-preview" style="background-color: ${value};"></span> ${value}`;
+            }
+            // Make URLs clickable
+            if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('www.'))) {
+                let displayUrl = value.length > 50 ? value.substring(0, 47) + '...' : value;
+                return `<a href="${value}" target="_blank" rel="noopener noreferrer">${escapeHtml(displayUrl)}</a>`;
+            }
+            // Make email clickable
+            if (lowerKey.includes('email') && value.includes('@')) {
+                return `<a href="mailto:${value}">${escapeHtml(value)}</a>`;
+            }
+            // Make phone clickable
+            if (lowerKey.includes('phone') && value.match(/[\d\s\+\(\)\-]+/)) {
+                return `<a href="tel:${value.replace(/[^0-9+]/g, '')}">${escapeHtml(value)}</a>`;
+            }
+            return escapeHtml(value);
+        };
+        
         // Categorize fields
-        const clientFields = ['Business Name', 'Name', 'Phone', 'Email', 'VK', 'City', 'Address', 'Preferred Language'];
-        const projectFields = ['Category', 'Website Type', 'Budget', 'Brand Color', 'Logo', 'Existing Site', 'Domain', 'Referrer', 'Has Hosting', 'Notes', 'Edit Type', 'Desired Date', 'Description', 'Service', 'Message', 'Transaction ID', 'Amount'];
-        const leadFields = ['Lead ID', 'Created At', 'Date', 'Status', 'Payment Status', 'Request Type'];
+        const clientKeys = ['Business Name', 'Name', 'Phone', 'Email', 'VK', 'City', 'Address', 'Preferred Language'];
+        const projectKeys = ['Category', 'Website Type', 'Budget', 'Brand Color', 'Logo', 'Existing Site', 'Domain', 'Referrer', 'Has Hosting', 'Notes', 'Edit Type', 'Desired Date', 'Description', 'Service', 'Message', 'Site', 'Edit Type'];
+        const leadKeys = ['Lead ID', 'Created At', 'Date', 'Status', 'Payment Status', 'Amount', 'Transaction ID', 'action', 'Request Type'];
         
         let clientHtml = `<div class="lead-details-section"><h4><i class="fas fa-user-circle"></i> Client Information</h4>`;
         let projectHtml = `<div class="lead-details-section"><h4><i class="fas fa-code-branch"></i> Project Details</h4>`;
         let leadHtml = `<div class="lead-details-section"><h4><i class="fas fa-chart-line"></i> Lead Information</h4>`;
         
-        for (let [key, value] of Object.entries(lead)) {
+        // Process all keys
+        for (let key in lead) {
+            if (!lead.hasOwnProperty(key)) continue;
+            const value = lead[key];
             if (value === undefined || value === null || value === '') continue;
-            let displayValue = value;
-            if (key === 'Logo' && value && value !== '—') {
-                displayValue = `<img src="${escapeHtml(value)}" class="logo-thumb" onerror="this.style.display='none'" alt="Logo">`;
-            } else if (key === 'VK' && value && value !== '—') {
-                displayValue = `<a href="${escapeHtml(value)}" target="_blank">${escapeHtml(value)}</a>`;
+            const displayKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            const formattedValue = formatValue(key, value);
+            const row = `<div class="detail-row"><div class="detail-label">${escapeHtml(displayKey)}:</div><div class="detail-value">${formattedValue}</div></div>`;
+            
+            if (clientKeys.includes(key) || key.toLowerCase().includes('name') || key.toLowerCase().includes('phone') || key.toLowerCase().includes('email') || key.toLowerCase().includes('vk') || key.toLowerCase().includes('city') || key.toLowerCase().includes('address') || key.toLowerCase().includes('language')) {
+                clientHtml += row;
+            } else if (projectKeys.includes(key) || key.toLowerCase().includes('site') || key.toLowerCase().includes('budget') || key.toLowerCase().includes('color') || key.toLowerCase().includes('logo') || key.toLowerCase().includes('domain') || key.toLowerCase().includes('referrer') || key.toLowerCase().includes('hosting') || key.toLowerCase().includes('notes') || key.toLowerCase().includes('type') || key.toLowerCase().includes('date') || key.toLowerCase().includes('description') || key.toLowerCase().includes('service') || key.toLowerCase().includes('message')) {
+                projectHtml += row;
+            } else if (leadKeys.includes(key) || key.toLowerCase().includes('id') || key.toLowerCase().includes('created') || key.toLowerCase().includes('status') || key.toLowerCase().includes('payment') || key.toLowerCase().includes('amount') || key.toLowerCase().includes('transaction') || key.toLowerCase().includes('action')) {
+                leadHtml += row;
             } else {
-                displayValue = escapeHtml(String(value));
+                projectHtml += row; // fallback to project details
             }
-            const row = `<div class="detail-row"><div class="detail-label">${escapeHtml(key.replace(/_/g,' '))}:</div><div class="detail-value">${displayValue}</div></div>`;
-            if (clientFields.includes(key)) clientHtml += row;
-            else if (projectFields.includes(key)) projectHtml += row;
-            else if (leadFields.includes(key)) leadHtml += row;
-            else projectHtml += row; // uncategorized go to project
         }
+        
         clientHtml += `</div>`;
         projectHtml += `</div>`;
         leadHtml += `</div>`;
-        container.innerHTML = clientHtml + projectHtml + leadHtml;
         
-        // Follow-up history
-        const followupDiv = document.getElementById('followupEntries');
-        const history = followupHistory[leadId] || [];
-        if (history.length === 0) followupDiv.innerHTML = '<div class="followup-item">No follow-up notes yet.</div>';
-        else {
-            followupDiv.innerHTML = history.map(note => `<div class="followup-item"><strong>${note.date}</strong>: ${escapeHtml(note.text)}</div>`).join('');
-        }
-        window.currentLeadId = leadId;
+        container.innerHTML = clientHtml + projectHtml + leadHtml;
         openModal('leadDetails');
     }
-    
-    function addFollowupNote() {
-        if (!window.currentLeadId) return;
-        const note = prompt('Enter follow-up note:');
-        if (!note) return;
-        const history = followupHistory[window.currentLeadId] || [];
-        history.unshift({ date: new Date().toLocaleString(), text: note });
-        followupHistory[window.currentLeadId] = history;
-        localStorage.setItem('followupHistory', JSON.stringify(followupHistory));
-        showLeadDetailsById(window.currentLeadId);
-    }
-    document.getElementById('addFollowupBtn')?.addEventListener('click', addFollowupNote);
-    
-    // ========== ENHANCED LEADS TABLE WITH PAGINATION AND INLINE EDIT ==========
+
+    // ========== LEADS TABLE with additional columns ==========
     function applyFiltersAndSort() {
         let filtered = [...leadsData];
-        if (statusFilter !== 'all') filtered = filtered.filter(l => (l['Status'] || 'new').toLowerCase() === statusFilter.toLowerCase());
-        if (paymentFilter !== 'all') filtered = filtered.filter(l => (l['Payment Status'] || 'unpaid').toLowerCase() === paymentFilter.toLowerCase());
-        if (languageFilter !== 'all') filtered = filtered.filter(l => (l['Preferred Language'] || 'en').toLowerCase() === languageFilter.toLowerCase());
-        if (referrerFilter !== 'all') filtered = filtered.filter(l => (l['Referrer'] || '').toLowerCase() === referrerFilter.toLowerCase());
-        if (editTypeFilter !== 'all') filtered = filtered.filter(l => (l['Edit Type'] || '').toLowerCase() === editTypeFilter.toLowerCase());
-        if (serviceFilter !== 'all') filtered = filtered.filter(l => (l['Service'] || l['Category'] || '').toLowerCase().includes(serviceFilter.toLowerCase()));
+        if (statusFilter !== 'all') {
+            filtered = filtered.filter(lead => (lead['Status'] || 'new').toLowerCase() === statusFilter.toLowerCase());
+        }
+        if (paymentFilter !== 'all') {
+            filtered = filtered.filter(lead => (lead['Payment Status'] || 'unpaid').toLowerCase() === paymentFilter.toLowerCase());
+        }
         if (searchTerm.trim() !== '') {
             const term = searchTerm.toLowerCase();
-            filtered = filtered.filter(l => 
-                (l['Business Name'] || '').toLowerCase().includes(term) ||
-                (l['Phone'] || '').toLowerCase().includes(term) ||
-                (l['Email'] || '').toLowerCase().includes(term) ||
-                (l['Lead ID'] || '').toLowerCase().includes(term)
+            filtered = filtered.filter(lead => 
+                (lead['Business Name'] || lead['Name'] || '').toLowerCase().includes(term) ||
+                (lead['Phone'] || '').toLowerCase().includes(term) ||
+                (lead['Email'] || '').toLowerCase().includes(term) ||
+                (lead['Lead ID'] || '').toLowerCase().includes(term)
             );
         }
-        filtered.sort((a,b) => {
-            let aVal = a[sortColumn] || '', bVal = b[sortColumn] || '';
+        filtered.sort((a, b) => {
+            let aVal = a[sortColumn] || '';
+            let bVal = b[sortColumn] || '';
             if (typeof aVal === 'string') aVal = aVal.toLowerCase();
             if (typeof bVal === 'string') bVal = bVal.toLowerCase();
             if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
@@ -910,20 +1600,18 @@
             return 0;
         });
         filteredLeads = filtered;
-        currentPage = 1;
         renderLeadsTableBody();
-        renderPagination();
     }
-    
+
     function renderLeadsTableBody() {
         const tbody = document.getElementById('leadsTableBody');
         if (!tbody) return;
-        const start = (currentPage-1)*rowsPerPage;
-        const end = start + rowsPerPage;
-        const pageLeads = filteredLeads.slice(start, end);
-        if (pageLeads.length === 0) { tbody.innerHTML = '<tr><td colspan="15">No leads found</td></tr>'; return; }
+        if (filteredLeads.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="13">No leads found</td></tr>';
+            return;
+        }
         let html = '';
-        pageLeads.forEach((lead, idx) => {
+        filteredLeads.forEach((lead, idx) => {
             const leadIdSafe = escapeHtml(String(lead['Lead ID'] || idx+1));
             const businessName = escapeHtml(String(lead['Business Name'] || lead['Name'] || '-'));
             const city = escapeHtml(String(lead['City'] || '-'));
@@ -934,16 +1622,13 @@
             const createdAt = escapeHtml(String(lead['Created At'] || lead['Date'] || '-'));
             const status = escapeHtml(String(lead['Status'] || 'new'));
             const paymentStatus = escapeHtml(String(lead['Payment Status'] || 'unpaid'));
-            const language = escapeHtml(String(lead['Preferred Language'] || 'en'));
-            const referrer = escapeHtml(String(lead['Referrer'] || '-'));
-            const transactionId = escapeHtml(String(lead['Transaction ID'] || '-'));
-            const amount = escapeHtml(String(lead['Amount'] || '-'));
-            const editType = escapeHtml(String(lead['Edit Type'] || '-'));
-            const service = escapeHtml(String(lead['Service'] || '-'));
-            const hasHosting = escapeHtml(String(lead['Has Hosting'] === 'on' ? 'Yes' : (lead['Has Hosting'] || 'No')));
-            const domain = escapeHtml(String(lead['Domain'] || '-'));
-            let statusClass = status === 'paid' ? 'status-paid' : (status === 'sent' ? 'status-sent' : 'status-new');
-            let paymentClass = (paymentStatus === 'paid' || paymentStatus === 'confirmed') ? 'status-paid' : 'status-new';
+            const preferredLang = escapeHtml(String(lead['Preferred Language'] || lead['Preferred Language for Website'] || '-'));
+            const requestType = escapeHtml(String(lead['action'] || lead['Request Type'] || (lead['service'] ? 'Service Order' : (lead['editType'] ? 'Edit Request' : (lead['Category'] ? 'Demo' : 'Consultation')))));
+            let statusClass = 'status-new';
+            if (status === 'paid') statusClass = 'status-paid';
+            if (status === 'sent') statusClass = 'status-sent';
+            let paymentClass = 'status-new';
+            if (paymentStatus === 'paid' || paymentStatus === 'confirmed') paymentClass = 'status-paid';
             html += `<tr>
                 <td><input type="checkbox" class="leadCheckbox" data-id="${leadIdSafe}"></td>
                 <td>${leadIdSafe}</td>
@@ -953,17 +1638,11 @@
                 <td>${email}</td>
                 <td>${websiteType}</td>
                 <td>${budget}</td>
+                <td>${preferredLang}</td>
+                <td>${requestType}</td>
                 <td>${createdAt}</td>
-                <td><span class="editable-status status-badge ${statusClass}" data-lead="${leadIdSafe}" data-field="Status" data-value="${status}">${status}</span></td>
-                <td><span class="editable-status status-badge ${paymentClass}" data-lead="${leadIdSafe}" data-field="Payment Status" data-value="${paymentStatus}">${paymentStatus}</span></td>
-                <td>${language}</td>
-                <td>${referrer}</td>
-                <td>${transactionId}</td>
-                <td>${amount}</td>
-                <td>${editType}</td>
-                <td>${service}</td>
-                <td>${hasHosting}</td>
-                <td>${domain}</td>
+                <td><span class="status-badge ${statusClass}">${status}</span></td>
+                <td><span class="status-badge ${paymentClass}">${paymentStatus}</span></td>
                 <td>
                     <button class="btn-icon" onclick="showLeadDetailsById('${leadIdSafe}')" title="Details"><i class="fas fa-info-circle"></i></button>
                     <button class="btn-icon" onclick="alert('Send message to ${leadIdSafe}')"><i class="fas fa-envelope"></i></button>
@@ -973,60 +1652,21 @@
             </tr>`;
         });
         tbody.innerHTML = html;
-        // Attach inline edit listeners
-        document.querySelectorAll('.editable-status').forEach(el => {
-            el.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const leadId = el.getAttribute('data-lead');
-                const field = el.getAttribute('data-field');
-                const currentVal = el.getAttribute('data-value');
-                const select = document.createElement('select');
-                select.className = 'status-select';
-                const options = field === 'Status' ? ['new','sent','paid'] : ['unpaid','paid','confirmed'];
-                options.forEach(opt => {
-                    const option = document.createElement('option');
-                    option.value = opt;
-                    option.text = opt;
-                    if (opt === currentVal) option.selected = true;
-                    select.appendChild(option);
-                });
-                select.addEventListener('change', async () => {
-                    const newVal = select.value;
-                    showLoading();
-                    try {
-                        const formData = new FormData();
-                        formData.append('action', 'updateLeadField');
-                        formData.append('lead_id', leadId);
-                        formData.append('field', field);
-                        formData.append('value', newVal);
-                        const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
-                        const result = await res.json();
-                        if (result.success) {
-                            // Update local data
-                            const lead = leadsData.find(l => String(l['Lead ID']) === leadId);
-                            if (lead) lead[field] = newVal;
-                            applyFiltersAndSort();
-                        } else alert('Update failed');
-                    } catch(err) { alert('Network error'); }
-                    hideLoading();
-                });
-                el.parentNode.replaceChild(select, el);
-                select.focus();
-            });
-        });
-    }
-    
-    function renderPagination() {
-        const totalPages = Math.ceil(filteredLeads.length / rowsPerPage);
-        let paginationHtml = `<div class="pagination"><button onclick="changePage(1)" ${currentPage===1 ? 'disabled' : ''}>&laquo;</button>`;
-        for (let i=1; i<=totalPages; i++) {
-            paginationHtml += `<button class="${i===currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        const selectAllCheckbox = document.getElementById('selectAllLeads');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.onchange = (e) => {
+                document.querySelectorAll('.leadCheckbox').forEach(cb => cb.checked = e.target.checked);
+            };
         }
-        paginationHtml += `<button onclick="changePage(${totalPages})" ${currentPage===totalPages ? 'disabled' : ''}>&raquo;</button></div>`;
-        document.getElementById('paginationContainer').innerHTML = paginationHtml;
     }
-    window.changePage = (page) => { currentPage = page; renderLeadsTableBody(); renderPagination(); };
-    
+
+    async function fetchLeads() {
+        const res = await fetch(SCRIPT_URL);
+        const data = await res.json();
+        leadsData = data.leads || [];
+        return leadsData;
+    }
+
     async function renderLeadsTable() {
         await fetchLeads();
         applyFiltersAndSort();
@@ -1039,68 +1679,93 @@
             </div>
             <div class="filter-bar">
                 <input type="text" id="searchLeadsInput" class="search-input" placeholder="Search by name, phone, email or ID" style="width: 250px;">
-                <select id="statusFilterSelect" class="search-input"><option value="all">All Statuses</option><option value="new">New</option><option value="sent">Sent</option><option value="paid">Paid</option></select>
-                <select id="paymentFilterSelect" class="search-input"><option value="all">All Payments</option><option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="confirmed">Confirmed</option></select>
-                <select id="languageFilterSelect" class="search-input"><option value="all">All Languages</option><option value="en">English</option><option value="ru">Russian</option></select>
-                <select id="referrerFilterSelect" class="search-input"><option value="all">All Referrers</option><option value="vk">VK</option><option value="telegram">Telegram</option><option value="search">Search</option><option value="friend">Friend</option><option value="other">Other</option></select>
-                <select id="editTypeFilterSelect" class="search-input"><option value="all">All Edit Types</option><option value="design">Design</option><option value="function">Functionality</option><option value="content">Content</option><option value="other">Other</option></select>
-                <select id="serviceFilterSelect" class="search-input"><option value="all">All Services</option><option value="landing">Landing Page</option><option value="ecommerce">Online Store</option><option value="corporate">Corporate</option></select>
+                <select id="statusFilterSelect" class="search-input" style="width: 150px;">
+                    <option value="all">All Statuses</option>
+                    <option value="new">New</option>
+                    <option value="sent">Sent</option>
+                    <option value="paid">Paid</option>
+                </select>
+                <select id="paymentFilterSelect" class="search-input" style="width: 150px;">
+                    <option value="all">All Payments</option>
+                    <option value="unpaid">Unpaid</option>
+                    <option value="paid">Paid</option>
+                    <option value="confirmed">Confirmed</option>
+                </select>
                 <button class="btn" id="resetFiltersBtn">Reset</button>
             </div>
-            <div class="leads-table-container">
+            <div style="overflow-x: auto;">
                 <table class="leads-table">
-                    <thead><tr>
-                        <th><input type="checkbox" id="selectAllLeads"></th>
-                        <th data-sort="Lead ID">ID <i class="fas fa-sort"></i></th><th data-sort="Business Name">Business</th><th data-sort="City">City</th><th data-sort="Phone">Phone</th><th data-sort="Email">Email</th>
-                        <th data-sort="Category">Type</th><th data-sort="Budget">Budget</th><th data-sort="Created At">Created</th><th data-sort="Status">Status</th><th data-sort="Payment Status">Payment</th>
-                        <th data-sort="Preferred Language">Lang</th><th data-sort="Referrer">Referrer</th><th data-sort="Transaction ID">Transaction</th><th data-sort="Amount">Amount</th>
-                        <th data-sort="Edit Type">Edit Type</th><th data-sort="Service">Service</th><th data-sort="Has Hosting">Hosting</th><th data-sort="Domain">Domain</th><th>Actions</th>
-                    </tr></thead>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllLeads"></th>
+                            <th data-sort="Lead ID">ID <i class="fas fa-sort"></i></th>
+                            <th data-sort="Business Name">Business <i class="fas fa-sort"></i></th>
+                            <th data-sort="City">City <i class="fas fa-sort"></i></th>
+                            <th data-sort="Phone">Phone <i class="fas fa-sort"></i></th>
+                            <th data-sort="Email">Email <i class="fas fa-sort"></i></th>
+                            <th data-sort="Category">Type <i class="fas fa-sort"></i></th>
+                            <th data-sort="Budget">Budget <i class="fas fa-sort"></i></th>
+                            <th data-sort="Preferred Language">Language <i class="fas fa-sort"></i></th>
+                            <th data-sort="Request Type">Request <i class="fas fa-sort"></i></th>
+                            <th data-sort="Created At">Created <i class="fas fa-sort"></i></th>
+                            <th data-sort="Status">Status <i class="fas fa-sort"></i></th>
+                            <th data-sort="Payment Status">Payment <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
                     <tbody id="leadsTableBody"></tbody>
                 </table>
             </div>
-            <div id="paginationContainer"></div>
         `;
         document.getElementById('refreshLeadsBtn').onclick = async () => { await renderLeadsTable(); };
         document.getElementById('exportCsvBtn').onclick = exportToCSV;
         document.getElementById('searchLeadsInput').oninput = (e) => { searchTerm = e.target.value; applyFiltersAndSort(); };
         document.getElementById('statusFilterSelect').onchange = (e) => { statusFilter = e.target.value; applyFiltersAndSort(); };
         document.getElementById('paymentFilterSelect').onchange = (e) => { paymentFilter = e.target.value; applyFiltersAndSort(); };
-        document.getElementById('languageFilterSelect').onchange = (e) => { languageFilter = e.target.value; applyFiltersAndSort(); };
-        document.getElementById('referrerFilterSelect').onchange = (e) => { referrerFilter = e.target.value; applyFiltersAndSort(); };
-        document.getElementById('editTypeFilterSelect').onchange = (e) => { editTypeFilter = e.target.value; applyFiltersAndSort(); };
-        document.getElementById('serviceFilterSelect').onchange = (e) => { serviceFilter = e.target.value; applyFiltersAndSort(); };
         document.getElementById('resetFiltersBtn').onclick = () => {
             document.getElementById('searchLeadsInput').value = '';
             document.getElementById('statusFilterSelect').value = 'all';
             document.getElementById('paymentFilterSelect').value = 'all';
-            document.getElementById('languageFilterSelect').value = 'all';
-            document.getElementById('referrerFilterSelect').value = 'all';
-            document.getElementById('editTypeFilterSelect').value = 'all';
-            document.getElementById('serviceFilterSelect').value = 'all';
-            searchTerm = ''; statusFilter = 'all'; paymentFilter = 'all'; languageFilter = 'all'; referrerFilter = 'all'; editTypeFilter = 'all'; serviceFilter = 'all';
+            searchTerm = '';
+            statusFilter = 'all';
+            paymentFilter = 'all';
             applyFiltersAndSort();
         };
         document.querySelectorAll('.leads-table th[data-sort]').forEach(th => {
+            th.style.cursor = 'pointer';
             th.onclick = () => {
                 const column = th.getAttribute('data-sort');
-                if (sortColumn === column) sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-                else { sortColumn = column; sortDirection = 'asc'; }
+                if (sortColumn === column) {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortColumn = column;
+                    sortDirection = 'asc';
+                }
                 applyFiltersAndSort();
             };
         });
         renderLeadsTableBody();
-        renderPagination();
     }
-    
+
     function exportToCSV() {
-        if (filteredLeads.length === 0) { alert('No data to export'); return; }
-        const headers = ['Lead ID','Business Name','City','Phone','Email','Website Type','Budget','Created At','Status','Payment Status','Preferred Language','Referrer','Transaction ID','Amount','Edit Type','Service','Has Hosting','Domain'];
+        if (filteredLeads.length === 0) {
+            alert('No data to export');
+            return;
+        }
+        const headers = ['Lead ID', 'Business Name', 'City', 'Phone', 'Email', 'Website Type', 'Budget', 'Preferred Language', 'Request Type', 'Created At', 'Status', 'Payment Status'];
         const rows = filteredLeads.map(lead => [
-            lead['Lead ID'] || '', lead['Business Name'] || lead['Name'] || '', lead['City'] || '', lead['Phone'] || '', lead['Email'] || '',
-            lead['Category'] || lead['Website Type'] || lead['Service'] || '', lead['Budget'] || '', lead['Created At'] || lead['Date'] || '',
-            lead['Status'] || 'new', lead['Payment Status'] || 'unpaid', lead['Preferred Language'] || 'en', lead['Referrer'] || '',
-            lead['Transaction ID'] || '', lead['Amount'] || '', lead['Edit Type'] || '', lead['Service'] || '', lead['Has Hosting'] === 'on' ? 'Yes' : (lead['Has Hosting'] || 'No'), lead['Domain'] || ''
+            lead['Lead ID'] || '',
+            lead['Business Name'] || lead['Name'] || '',
+            lead['City'] || '',
+            lead['Phone'] || '',
+            lead['Email'] || '',
+            lead['Category'] || lead['Website Type'] || lead['Service'] || '',
+            lead['Budget'] || '',
+            lead['Preferred Language'] || lead['Preferred Language for Website'] || '',
+            lead['action'] || lead['Request Type'] || (lead['service'] ? 'Service Order' : (lead['editType'] ? 'Edit Request' : (lead['Category'] ? 'Demo' : 'Consultation'))),
+            lead['Created At'] || lead['Date'] || '',
+            lead['Status'] || 'new',
+            lead['Payment Status'] || 'unpaid'
         ]);
         const csvContent = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1113,44 +1778,217 @@
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
     }
-    
-    async function fetchLeads() {
-        const res = await fetch(SCRIPT_URL);
-        const data = await res.json();
-        leadsData = data.leads || [];
-        checkNewLeads();
-        return leadsData;
+
+    async function renderDashboard() {
+        const leads = await fetchLeads();
+        const total = leads.length;
+        const newLeads = leads.filter(l => l.Status === 'new' || l.Status === 'pending_payment').length;
+        const sent = leads.filter(l => l.Status === 'sent').length;
+        const paid = leads.filter(l => l['Payment Status'] === 'paid' || l['Payment Status'] === 'confirmed').length;
+        document.getElementById('adminContent').innerHTML = `
+            <div class="quick-actions">
+                <button class="btn" onclick="alert('Export CSV')"><i class="fas fa-download"></i> Export CSV</button>
+                <button class="btn" onclick="alert('Mass message')"><i class="fas fa-bullhorn"></i> Mass message</button>
+                <button class="btn" onclick="alert('Backup created')"><i class="fas fa-database"></i> Backup</button>
+            </div>
+            <div class="stats-cards">
+                <div class="stat-card"><div class="stat-number">${total}</div><div>${translations[currentLang].stats_total}</div></div>
+                <div class="stat-card"><div class="stat-number">${newLeads}</div><div>${translations[currentLang].stats_new}</div></div>
+                <div class="stat-card"><div class="stat-number">${sent}</div><div>${translations[currentLang].stats_sent}</div></div>
+                <div class="stat-card"><div class="stat-number">${paid}</div><div>${translations[currentLang].stats_paid}</div></div>
+            </div>
+            <canvas id="leadsChart" width="400" height="200"></canvas>
+        `;
+        new Chart(document.getElementById('leadsChart'),{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{label:'Leads',data:[Math.floor(total*0.2),Math.floor(total*0.3),Math.floor(total*0.1),Math.floor(total*0.4),Math.floor(total*0.2),Math.floor(total*0.5),Math.floor(total*0.3)],borderColor:'var(--gold)',fill:false}]}});
     }
-    
-    async function confirmPayment(leadId) {
-        if (!confirm(`Confirm payment for lead ${leadId}?`)) return;
-        const formData = new FormData();
-        formData.append('action', 'confirmPayment');
-        formData.append('lead_id', leadId);
-        try {
-            const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
-            const result = await response.json();
-            if (result.success) {
-                alert('✅ Payment confirmed!');
-                await renderLeadsTable();
-            } else alert('❌ ' + result.message);
-        } catch(err) { alert('Network error'); }
+
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
     }
-    
-    // ========== INITIALIZE ==========
-    window.applyLanguage = applyLanguage;
-    window.showLeadDetailsById = showLeadDetailsById;
-    window.confirmPayment = confirmPayment;
-    // Other existing functions (renderServices, renderPortfolio, etc.) are assumed to be present.
-    // For brevity, we keep the rest of the existing code (services, blog, portfolio, reviews, etc.) unchanged.
-    // The full HTML includes all the original sections, but due to length we rely on the original.
-    // In the actual output, I will include the complete translations and all missing parts.
-    
-    // Note: Since the original code is huge, the above enhancements are integrated.
-    // The final HTML will be a complete file with all the above improvements.
-    
-    // For the sake of completion, the rest of the original script (applyLanguage, renderServices, etc.) remains exactly as provided.
-    // (I am not repeating the entire 8000 lines, but the final answer will contain the complete file.)
+
+    async function renderAnalytics() { document.getElementById('adminContent').innerHTML = `<h3>📊 Analytics</h3><canvas id="conversionChart"></canvas><p>Conversion rate: 18%</p><canvas id="sourceChart"></canvas>`; new Chart(document.getElementById('conversionChart'),{type:'bar',data:{labels:['Views','Leads','Payments'],datasets:[{label:'',data:[100,leadsData.length,leadsData.filter(l=>l['Payment Status']==='paid').length],backgroundColor:'var(--gold)'}]}}); new Chart(document.getElementById('sourceChart'),{type:'pie',data:{labels:['VK','Telegram','Site','Ads'],datasets:[{data:[40,25,20,15],backgroundColor:['#C8A96A','#A67B5A','#5E3A2C','#B58C48']}]}}); }
+    async function renderSEO() { document.getElementById('adminContent').innerHTML = `<h3>🔍 SEO Meta Tags</h3><label>Title:</label><input class="search-input" value="Unique Web Studio | Website Creation"><label>Meta description:</label><textarea class="search-input">Professional website development, high conversion.</textarea><button class="btn">Save</button>`; }
+    async function renderBackup() { document.getElementById('adminContent').innerHTML = `<h3>💾 Backup</h3><button class="btn" onclick="alert('Backup created')">Create backup</button><button class="btn" onclick="alert('Restore from backup')">Restore</button><p>Last backup: 2025-04-04</p>`; }
+    async function renderNotifications() { document.getElementById('adminContent').innerHTML = `<h3>🔔 Notification settings</h3><label><input type="checkbox"> Email on new lead</label><label><input type="checkbox"> Telegram bot</label><label><input type="checkbox"> Push notifications</label><button class="btn">Save</button>`; }
+    async function renderFollowUp(){ document.getElementById('adminContent').innerHTML = `<h3>⏰ Automatic reminders</h3><label>Intervals (days):</label><input class="search-input" value="2,7,14"><label>Message text:</label><textarea class="search-input">Hello! You haven't paid for the website yet? 15% discount valid until the end of the week.</textarea><button class="btn">Save</button>`; }
+    async function renderScraper(){ document.getElementById('adminContent').innerHTML = `<h3>🤖 Yandex Maps scraper</h3><button class="btn" onclick="alert('Scraping started (backend required)')">Start parsing</button><button class="btn" onclick="alert('Stopped')">Stop</button><p>Last run: 2025-04-04 10:23</p>`; }
+    async function renderTickets(){ document.getElementById('adminContent').innerHTML = `<h3>🎫 Support tickets</h3><div class="admin-item"><strong>Question from Ivan</strong><br>Cannot pay for order #123.<button class="btn-icon"><i class="fas fa-reply"></i></button></div>`; }
+    async function renderSettings(){ document.getElementById('adminContent').innerHTML = `<h3>⚙️ General settings</h3><label>Admin email:</label><input class="search-input" value="admin@uniquewebstudio.ru"><label>VK group link:</label><input class="search-input" value="https://vk.com/unique__business"><button class="btn">Save</button>`; }
+    async function renderLogs(){ document.getElementById('adminContent').innerHTML = `<h3>📜 System logs</h3><div class="log-area">[2025-04-04 10:23] Scraping started<br>[2025-04-04 09:15] New demo request<br>[2025-04-03 22:10] Payment #124</div><button class="btn" onclick="alert('Logs cleared')">Clear logs</button>`; }
+    async function renderTextEditor(){
+        const ru = translations.ru;
+        const en = translations.en;
+        document.getElementById('adminContent').innerHTML = `
+            <div class="admin-text-editor">
+                <h3>✏️ Text Editor (Russian version)</h3>
+                <label>Hero Title (RU):</label><input type="text" id="heroTitleRu" class="search-input" value="${ru.hero_title.replace(/"/g, '&quot;')}">
+                <label>Hero Description (RU):</label><textarea id="heroDescRu" rows="2" class="search-input">${ru.hero_desc}</textarea>
+                <label>Services Title (RU):</label><input type="text" id="servicesTitleRu" class="search-input" value="${ru.services_title}">
+                <label>Portfolio Title (RU):</label><input type="text" id="portfolioTitleRu" class="search-input" value="${ru.portfolio_title}">
+                <label>Blog Title (RU):</label><input type="text" id="blogTitleRu" class="search-input" value="${ru.blog_title}">
+                <label>Reviews Title (RU):</label><input type="text" id="reviewsTitleRu" class="search-input" value="${ru.reviews_title}">
+                <label>Edit Section Title (RU):</label><input type="text" id="editTitleRu" class="search-input" value="${ru.edit_title}">
+                <label>Contact Title (RU):</label><input type="text" id="contactTitleRu" class="search-input" value="${ru.contact_title}">
+                <label>Footer Copyright (RU):</label><input type="text" id="footerCopyrightRu" class="search-input" value="${ru.footer_copyright}">
+                <label>Service 1 (Title, desc, price):</label>
+                <input type="text" id="service1TitleRu" value="${ru.services[0].title}"><input type="text" id="service1DescRu" value="${ru.services[0].desc}"><input type="text" id="service1PriceRu" value="${ru.services[0].price}">
+                <label>Service 2:</label>
+                <input type="text" id="service2TitleRu" value="${ru.services[1].title}"><input type="text" id="service2DescRu" value="${ru.services[1].desc}"><input type="text" id="service2PriceRu" value="${ru.services[1].price}">
+                <label>Service 3:</label>
+                <input type="text" id="service3TitleRu" value="${ru.services[2].title}"><input type="text" id="service3DescRu" value="${ru.services[2].desc}"><input type="text" id="service3PriceRu" value="${ru.services[2].price}">
+                <label>Service 4 (Website Edit):</label>
+                <input type="text" id="service4TitleRu" value="${ru.services[3].title}"><input type="text" id="service4DescRu" value="${ru.services[3].desc}"><input type="text" id="service4PriceRu" value="${ru.services[3].price}">
+                <hr>
+                <h3>English version</h3>
+                <label>Hero Title (EN):</label><input type="text" id="heroTitleEn" class="search-input" value="${en.hero_title.replace(/"/g, '&quot;')}">
+                <label>Hero Description (EN):</label><textarea id="heroDescEn" rows="2" class="search-input">${en.hero_desc}</textarea>
+                <label>Services Title (EN):</label><input type="text" id="servicesTitleEn" class="search-input" value="${en.services_title}">
+                <label>Portfolio Title (EN):</label><input type="text" id="portfolioTitleEn" class="search-input" value="${en.portfolio_title}">
+                <label>Blog Title (EN):</label><input type="text" id="blogTitleEn" class="search-input" value="${en.blog_title}">
+                <label>Reviews Title (EN):</label><input type="text" id="reviewsTitleEn" class="search-input" value="${en.reviews_title}">
+                <label>Edit Section Title (EN):</label><input type="text" id="editTitleEn" class="search-input" value="${en.edit_title}">
+                <label>Contact Title (EN):</label><input type="text" id="contactTitleEn" class="search-input" value="${en.contact_title}">
+                <label>Footer Copyright (EN):</label><input type="text" id="footerCopyrightEn" class="search-input" value="${en.footer_copyright}">
+                <label>Service 1:</label>
+                <input type="text" id="service1TitleEn" value="${en.services[0].title}"><input type="text" id="service1DescEn" value="${en.services[0].desc}"><input type="text" id="service1PriceEn" value="${en.services[0].price}">
+                <label>Service 2:</label>
+                <input type="text" id="service2TitleEn" value="${en.services[1].title}"><input type="text" id="service2DescEn" value="${en.services[1].desc}"><input type="text" id="service2PriceEn" value="${en.services[1].price}">
+                <label>Service 3:</label>
+                <input type="text" id="service3TitleEn" value="${en.services[2].title}"><input type="text" id="service3DescEn" value="${en.services[2].desc}"><input type="text" id="service3PriceEn" value="${en.services[2].price}">
+                <label>Service 4 (Website Edit):</label>
+                <input type="text" id="service4TitleEn" value="${en.services[3].title}"><input type="text" id="service4DescEn" value="${en.services[3].desc}"><input type="text" id="service4PriceEn" value="${en.services[3].price}">
+                <hr>
+                <label>Consent modal texts (RU):</label>
+                <input type="text" id="consentTitleRu" class="search-input" value="❗ Важное уведомление">
+                <textarea id="consentDescRu" rows="2" class="search-input">Для использования сайта и отправки заявок необходимо ознакомиться и согласиться с условиями:</textarea>
+                <input type="text" id="consentCheckboxRu" class="search-input" value="Я принимаю условия">
+                <input type="text" id="consentBtnRu" class="search-input" value="Продолжить">
+                <input type="text" id="consentWarningRu" class="search-input" value="Без принятия условий отправка заявок невозможна.">
+                <label>Consent modal texts (EN):</label>
+                <input type="text" id="consentTitleEn" class="search-input" value="❗ Important notice">
+                <textarea id="consentDescEn" rows="2" class="search-input">To use the site and submit requests, you must read and agree to the terms:</textarea>
+                <input type="text" id="consentCheckboxEn" class="search-input" value="I accept the terms">
+                <input type="text" id="consentBtnEn" class="search-input" value="Continue">
+                <input type="text" id="consentWarningEn" class="search-input" value="Without acceptance, requests cannot be sent.">
+                <hr>
+                <button class="btn" id="saveAllTextsBtn">💾 Save all changes</button>
+                <div id="editorResult" style="margin-top:15px;"></div>
+            </div>
+        `;
+        document.getElementById('saveAllTextsBtn').addEventListener('click',()=>{
+            translations.ru.hero_title = document.getElementById('heroTitleRu').value;
+            translations.ru.hero_desc = document.getElementById('heroDescRu').value;
+            translations.ru.services_title = document.getElementById('servicesTitleRu').value;
+            translations.ru.portfolio_title = document.getElementById('portfolioTitleRu').value;
+            translations.ru.blog_title = document.getElementById('blogTitleRu').value;
+            translations.ru.reviews_title = document.getElementById('reviewsTitleRu').value;
+            translations.ru.edit_title = document.getElementById('editTitleRu').value;
+            translations.ru.contact_title = document.getElementById('contactTitleRu').value;
+            translations.ru.footer_copyright = document.getElementById('footerCopyrightRu').value;
+            translations.ru.services = [
+                { title: document.getElementById('service1TitleRu').value, desc: document.getElementById('service1DescRu').value, price: document.getElementById('service1PriceRu').value, btn: "Заказать" },
+                { title: document.getElementById('service2TitleRu').value, desc: document.getElementById('service2DescRu').value, price: document.getElementById('service2PriceRu').value, btn: "Заказать" },
+                { title: document.getElementById('service3TitleRu').value, desc: document.getElementById('service3DescRu').value, price: document.getElementById('service3PriceRu').value, btn: "Заказать" },
+                { title: document.getElementById('service4TitleRu').value, desc: document.getElementById('service4DescRu').value, price: document.getElementById('service4PriceRu').value, btn: "Заказать" }
+            ];
+            translations.en.hero_title = document.getElementById('heroTitleEn').value;
+            translations.en.hero_desc = document.getElementById('heroDescEn').value;
+            translations.en.services_title = document.getElementById('servicesTitleEn').value;
+            translations.en.portfolio_title = document.getElementById('portfolioTitleEn').value;
+            translations.en.blog_title = document.getElementById('blogTitleEn').value;
+            translations.en.reviews_title = document.getElementById('reviewsTitleEn').value;
+            translations.en.edit_title = document.getElementById('editTitleEn').value;
+            translations.en.contact_title = document.getElementById('contactTitleEn').value;
+            translations.en.footer_copyright = document.getElementById('footerCopyrightEn').value;
+            translations.en.services = [
+                { title: document.getElementById('service1TitleEn').value, desc: document.getElementById('service1DescEn').value, price: document.getElementById('service1PriceEn').value, btn: "Order" },
+                { title: document.getElementById('service2TitleEn').value, desc: document.getElementById('service2DescEn').value, price: document.getElementById('service2PriceEn').value, btn: "Order" },
+                { title: document.getElementById('service3TitleEn').value, desc: document.getElementById('service3DescEn').value, price: document.getElementById('service3PriceEn').value, btn: "Order" },
+                { title: document.getElementById('service4TitleEn').value, desc: document.getElementById('service4DescEn').value, price: document.getElementById('service4PriceEn').value, btn: "Order" }
+            ];
+            document.querySelector('.consent-title-ru').innerText = document.getElementById('consentTitleRu').value;
+            document.querySelector('.consent-desc-ru').innerText = document.getElementById('consentDescRu').value;
+            document.querySelector('.consent-checkbox-ru').innerText = document.getElementById('consentCheckboxRu').value;
+            document.getElementById('acceptConsent').innerText = document.getElementById('consentBtnRu').value;
+            document.querySelector('.consent-warning-ru').innerText = document.getElementById('consentWarningRu').value;
+            document.querySelector('.consent-title-en').innerText = document.getElementById('consentTitleEn').value;
+            document.querySelector('.consent-desc-en').innerText = document.getElementById('consentDescEn').value;
+            document.querySelector('.consent-checkbox-en').innerText = document.getElementById('consentCheckboxEn').value;
+            document.getElementById('acceptConsentEn').innerText = document.getElementById('consentBtnEn').value;
+            document.querySelector('.consent-warning-en').innerText = document.getElementById('consentWarningEn').value;
+            localStorage.setItem('custom_translations_ru', JSON.stringify(translations.ru));
+            localStorage.setItem('custom_translations_en', JSON.stringify(translations.en));
+            applyLanguage(currentLang);
+            document.getElementById('editorResult').innerHTML = '<span style="color:green;">✅ All texts updated!</span>';
+        });
+    }
+    function renderActiveTab(){
+        if(currentAdminTab==='dashboard') renderDashboard();
+        else if(currentAdminTab==='leads') renderLeadsTable();
+        else if(currentAdminTab==='analytics') renderAnalytics();
+        else if(currentAdminTab==='seo') renderSEO();
+        else if(currentAdminTab==='backup') renderBackup();
+        else if(currentAdminTab==='notifications') renderNotifications();
+        else if(currentAdminTab==='followup') renderFollowUp();
+        else if(currentAdminTab==='scraper') renderScraper();
+        else if(currentAdminTab==='tickets') renderTickets();
+        else if(currentAdminTab==='settings') renderSettings();
+        else if(currentAdminTab==='logs') renderLogs();
+        else if(currentAdminTab==='editor') renderTextEditor();
+    }
+    document.querySelectorAll('.admin-tab').forEach(tab=>{
+        tab.addEventListener('click',()=>{
+            document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+            tab.classList.add('active');
+            currentAdminTab = tab.getAttribute('data-tab');
+            renderActiveTab();
+        });
+    });
+    document.getElementById('adminToggleBtn').addEventListener('click',()=>{
+        const pwd = prompt('Password:');
+        if(pwd === "9651776233aA@"){ document.getElementById('adminPanel').classList.add('open'); renderActiveTab(); }
+        else alert('Wrong password');
+    });
+    document.getElementById('adminClose').addEventListener('click',()=>document.getElementById('adminPanel').classList.remove('open'));
+
+    // Particles
+    for(let i=0;i<60;i++){ let p=document.createElement('div'); p.classList.add('particle'); let size=Math.random()*12+4; p.style.width=p.style.height=size+'px'; p.style.left=Math.random()*100+'%'; p.style.animationDuration=Math.random()*20+12+'s'; p.style.animationDelay=Math.random()*10+'s'; document.getElementById('particles').appendChild(p); }
+    function setupModalLanguageButtons() {
+        const policyRu = document.querySelector('.policy-lang-ru');
+        const policyEn = document.querySelector('.policy-lang-en');
+        const policyRuContent = document.querySelector('.policy-content-ru');
+        const policyEnContent = document.querySelector('.policy-content-en');
+        if(policyRu && policyEn) {
+            policyRu.addEventListener('click', () => {
+                policyRu.classList.add('active'); policyEn.classList.remove('active');
+                policyRuContent.style.display = 'block'; policyEnContent.style.display = 'none';
+            });
+            policyEn.addEventListener('click', () => {
+                policyEn.classList.add('active'); policyRu.classList.remove('active');
+                policyRuContent.style.display = 'none'; policyEnContent.style.display = 'block';
+            });
+        }
+        const refundRu = document.querySelector('.refund-lang-ru');
+        const refundEn = document.querySelector('.refund-lang-en');
+        const refundRuContent = document.querySelector('.refund-content-ru');
+        const refundEnContent = document.querySelector('.refund-content-en');
+        if(refundRu && refundEn) {
+            refundRu.addEventListener('click', () => {
+                refundRu.classList.add('active'); refundEn.classList.remove('active');
+                refundRuContent.style.display = 'block'; refundEnContent.style.display = 'none';
+            });
+            refundEn.addEventListener('click', () => {
+                refundEn.classList.add('active'); refundRu.classList.remove('active');
+                refundRuContent.style.display = 'none'; refundEnContent.style.display = 'block';
+            });
+        }
+    }
+    setupModalLanguageButtons();
 </script>
 </body>
 </html>
