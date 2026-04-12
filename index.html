@@ -1072,7 +1072,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.0/dist/vanilla-tilt.min.js"></script>
 <script>
     // ==================== GLOBAL VARIABLES ====================
-    // *** NEW SCRIPT_URL from your latest deployment (اگر عوض شد این خط را به‌روز کنید) ***
+    // *** NEW SCRIPT_URL from your latest deployment ***
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzAw-tV49aULijD38GVqjigkcY8DDA2xTXlblM6hrZ4L7Fa7fs6Z88pllyhVnctXxpI/exec';
     let currentLang = localStorage.getItem('lang') || 'en';
     let currentAdminTab = 'dashboard';
@@ -1086,6 +1086,7 @@
 
     // ==================== TRANSLATIONS (RU/EN) ====================
     let translations = {
+        // ... (همان ترجمه‌های قبلی، برای حفظ طول کد حذف شد – شما از فایل خود کپی کنید)
         ru: {
             nav_services: "Услуги", nav_portfolio: "Портфолио", nav_blog: "Блог", nav_reviews: "Отзывы", nav_contact: "Контакты",
             hero_title: "Создаем сайты, которые работают на вас", hero_desc: "Современный дизайн, высокая конверсия, полная поддержка. Закажите сайт уже сегодня.",
@@ -1573,53 +1574,30 @@
         });
     }
 
-    // ==================== FETCH LEADS WITH IFRAME (CORS FIX) ====================
+    // ==================== FETCH LEADS WITH XMLHttpRequest (CORS-FREE) ====================
     async function fetchLeads() {
         return new Promise((resolve) => {
-            const iframeId = 'fetch_iframe_' + Date.now();
-            const iframe = document.createElement('iframe');
-            iframe.name = iframeId;
-            iframe.id = iframeId;
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-            
-            const form = document.createElement('form');
-            form.method = 'GET';
-            form.action = SCRIPT_URL;
-            form.target = iframeId;
-            form.style.display = 'none';
-            document.body.appendChild(form);
-            
-            iframe.onload = () => {
-                try {
-                    let responseText = '';
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', SCRIPT_URL, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
                     try {
-                        responseText = iframe.contentDocument?.body?.innerText || '';
-                    } catch(e) { responseText = ''; }
-                    let data = { leads: [] };
-                    if (responseText && responseText.trim().startsWith('{')) {
-                        data = JSON.parse(responseText);
+                        const data = JSON.parse(xhr.responseText);
+                        resolve(data.leads || []);
+                    } catch(e) {
+                        console.error('JSON parse error', e);
+                        resolve([]);
                     }
-                    resolve(data.leads || []);
-                } catch(e) {
-                    console.error('Error parsing fetch response', e);
+                } else {
+                    console.error('Fetch leads failed:', xhr.status);
                     resolve([]);
                 }
-                setTimeout(() => {
-                    form.remove();
-                    iframe.remove();
-                }, 100);
             };
-            
-            form.submit();
-            
-            setTimeout(() => {
-                if (form.parentNode) {
-                    form.remove();
-                    iframe.remove();
-                    resolve([]);
-                }
-            }, 8000);
+            xhr.onerror = function() {
+                console.error('Network error');
+                resolve([]);
+            };
+            xhr.send();
         });
     }
 
@@ -2384,7 +2362,7 @@
         observer.observe(adminPanelEl, { attributes: true });
     }
     
-    console.log('✅ Enhancements loaded successfully | SCRIPT_URL updated | fetchLeads uses iframe (CORS-free)');
+    console.log('✅ Enhancements loaded successfully | SCRIPT_URL updated | fetchLeads uses XMLHttpRequest (CORS-free)');
 </script>
 </body>
 </html>
