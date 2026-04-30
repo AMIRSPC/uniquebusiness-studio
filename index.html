@@ -221,7 +221,19 @@
             .btn-group { gap: 16px; }
             .btn { padding: 12px 24px; font-size: 1rem; }
         }
-        .hero { min-height: 100vh; display: flex; align-items: center; background: radial-gradient(circle at 20% 30%, rgba(200,169,106,0.15) 0%, transparent 70%); }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background:
+                linear-gradient(110deg, rgba(12, 15, 20, 0.85) 0%, rgba(12, 15, 20, 0.6) 45%, rgba(12, 15, 20, 0.35) 100%),
+                url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1900&q=80') center/cover no-repeat;
+            border-bottom: 1px solid rgba(200, 169, 106, 0.25);
+        }
+        .hero .container { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 32px; align-items: center; }
+        .hero-shot { width: 100%; border-radius: 28px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 18px 36px rgba(0,0,0,0.35); }
+        .hero-badges { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 20px; }
+        .hero-badge { background: rgba(200,169,106,0.2); color: #fff; border: 1px solid rgba(200,169,106,0.5); border-radius: 999px; padding: 8px 14px; font-size: 0.85rem; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 50px; }
         .stat-item { background: var(--bg-card); backdrop-filter: blur(12px); border-radius: 32px; padding: 30px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(200,169,106,0.3); }
         .stat-item:hover { transform: translateY(-8px); border-color: var(--gold); box-shadow: var(--shadow-md); }
@@ -359,6 +371,13 @@
         @keyframes fadeOut { 0% { opacity: 1; transform: translateY(0); } 70% { opacity: 1; } 100% { opacity: 0; transform: translateY(20px); visibility: hidden; } }
         .template-img img { width: 100%; height: auto; border-radius: 20px; }
         .template-price { font-size: 1.5rem; font-weight: 700; color: var(--gold); margin: 15px 0; }
+        .template-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .template-preview-btn { background: transparent; border: 1px solid var(--gold); color: var(--gold-dark); border-radius: 24px; padding: 8px 14px; cursor: pointer; font-weight: 600; }
+        .template-preview-btn:hover { background: var(--gold); color: #2c2118; }
+        .template-card.selected { outline: 2px solid var(--gold); box-shadow: 0 0 0 4px rgba(200,169,106,0.25); }
+        @media (max-width: 900px) {
+            .hero .container { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -367,7 +386,7 @@
 <div class="cursor-dot-outline"></div>
 <div class="live-support" title="Support online 24/7"></div>
 <header class="header"><div class="container"><div class="logo"><div class="logo-monogram">UW</div><div class="logo-text">UNIQUE<br><span>WEB STUDIO</span></div></div><div class="mobile-menu"><i class="fas fa-bars"></i></div><div class="nav"><a href="#services" data-i18n="nav_services">Services</a><a href="#portfolio" data-i18n="nav_portfolio">Portfolio</a><a href="#templates" data-i18n="nav_templates">Templates</a><a href="#blog" data-i18n="nav_blog">Blog</a><a href="#reviews" data-i18n="nav_reviews">Reviews</a><a href="#contact" data-i18n="nav_contact">Contacts</a><button class="lang-switch" id="langSwitch">RU</button><button class="admin-toggle" id="adminToggleBtn"><i class="fas fa-chart-line"></i></button><button id="darkModeToggle"><i class="fas fa-moon"></i></button></div></div></header>
-<section class="hero"><div class="container"><h1 class="typewriter" data-i18n="hero_title">We create websites that work for you</h1><p data-i18n="hero_desc">Modern design, high conversion, full support. Order your website today.</p><div class="btn-group"><button class="btn" id="getDemoBtn"><i class="fas fa-paper-plane"></i> <span data-i18n="hero_demo_btn">Get demo</span></button><button class="btn btn-outline" id="consultBtn"><i class="fas fa-comment-dots"></i> <span data-i18n="hero_consult_btn">Request consultation</span></button></div></div></section>
+<section class="hero"><div class="container"><div><h1 class="typewriter" data-i18n="hero_title">We create websites that work for you</h1><p data-i18n="hero_desc">Modern design, high conversion, full support. Order your website today.</p><div class="hero-badges"><span class="hero-badge">Premium Templates</span><span class="hero-badge">Auto Content Fill</span><span class="hero-badge">Fast Launch</span></div><div class="btn-group"><button class="btn" id="getDemoBtn"><i class="fas fa-paper-plane"></i> <span data-i18n="hero_demo_btn">Get demo</span></button><button class="btn btn-outline" id="consultBtn"><i class="fas fa-comment-dots"></i> <span data-i18n="hero_consult_btn">Request consultation</span></button></div></div><div><img class="hero-shot" src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80" alt="Website design preview"></div></div></section>
 
 <section id="stats" class="container" data-aos="fade-up">
     <div class="stats-grid">
@@ -448,23 +467,44 @@ let statusFilter = 'all';
 let paymentFilter = 'all';
 let searchTerm = '';
 let customImages = JSON.parse(localStorage.getItem('customImages')) || { services: {}, portfolio: {}, blog: {}, templates: {} };
+const defaultImagePack = {
+    services: {
+        "Landing Page": "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=800&q=80",
+        "Online Store": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80",
+        "Corporate Website": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
+        "Website Editing": "https://images.unsplash.com/photo-1518773553398-650c184e0bb3?auto=format&fit=crop&w=800&q=80"
+    },
+    portfolio: {
+        "Студия красоты": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80",
+        "Магазин одежды": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=80",
+        "Ресторан": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80",
+        "IT-компания": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80",
+        "Мебельный магазин": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
+        "Маркетинговое агентство": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80"
+    },
+    blog: {
+        0: "https://images.unsplash.com/photo-1557838923-2985c318be48?auto=format&fit=crop&w=900&q=80",
+        1: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&w=900&q=80",
+        2: "https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=900&q=80"
+    }
+};
 
 // Template data: each service has 3 templates
 let templatesData = JSON.parse(localStorage.getItem('templatesData')) || {
     landing: [
-        { id: 'landing_1', name: { en: 'Modern Landing', ru: 'Современный лендинг' }, price: { en: 'from 6,000 ₽', ru: 'от 6 000 ₽' }, image: '' },
-        { id: 'landing_2', name: { en: 'Elegant Landing', ru: 'Элегантный лендинг' }, price: { en: 'from 7,000 ₽', ru: 'от 7 000 ₽' }, image: '' },
-        { id: 'landing_3', name: { en: 'Bold Landing', ru: 'Смелый лендинг' }, price: { en: 'from 8,000 ₽', ru: 'от 8 000 ₽' }, image: '' }
+        { id: 'landing_1', category: 'landing', name: { en: 'Modern Landing Pro', ru: 'Современный лендинг Pro' }, price: { en: 'from 6,000 ₽', ru: 'от 6 000 ₽' }, image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=900&q=80' },
+        { id: 'ext__landing__styleinn-bootstrap-interior-design-website-template', category: 'landing', name: { en: 'Interior Premium', ru: 'Премиум интерьер' }, price: { en: 'from 7,000 ₽', ru: 'от 7 000 ₽' }, image: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=80', preview_url: 'https://github.com/UNIQUE-STUDIO/website-templates-GITHUB/tree/main/styleinn-bootstrap-interior-design-website-template' },
+        { id: 'ext__landing__beauty-salon-bootstrap-html5-template', category: 'landing', name: { en: 'Beauty Landing', ru: 'Бьюти лендинг' }, price: { en: 'from 8,000 ₽', ru: 'от 8 000 ₽' }, image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80', preview_url: 'https://github.com/UNIQUE-STUDIO/website-templates-GITHUB/tree/main/beauty-salon-bootstrap-html5-template' }
     ],
     ecommerce: [
-        { id: 'shop_1', name: { en: 'Modern Shop', ru: 'Современный магазин' }, price: { en: 'from 12,000 ₽', ru: 'от 12 000 ₽' }, image: '' },
-        { id: 'shop_2', name: { en: 'Elegant Shop', ru: 'Элегантный магазин' }, price: { en: 'from 14,000 ₽', ru: 'от 14 000 ₽' }, image: '' },
-        { id: 'shop_3', name: { en: 'Bold Shop', ru: 'Смелый магазин' }, price: { en: 'from 16,000 ₽', ru: 'от 16 000 ₽' }, image: '' }
+        { id: 'shop_1', category: 'ecommerce', name: { en: 'Modern Shop Pro', ru: 'Современный магазин Pro' }, price: { en: 'from 12,000 ₽', ru: 'от 12 000 ₽' }, image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=80' },
+        { id: 'ext__ecommerce__bestro-restaurant-bootstrap-html5-template', category: 'ecommerce', name: { en: 'Food & Delivery', ru: 'Еда и доставка' }, price: { en: 'from 14,000 ₽', ru: 'от 14 000 ₽' }, image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80', preview_url: 'https://github.com/UNIQUE-STUDIO/website-templates-GITHUB/tree/main/bestro-restaurant-bootstrap-html5-template' },
+        { id: 'ext__ecommerce__car-zone-automobile-bootstrap-responsive-web-template', category: 'ecommerce', name: { en: 'Automotive Shop', ru: 'Авто магазин' }, price: { en: 'from 16,000 ₽', ru: 'от 16 000 ₽' }, image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80', preview_url: 'https://github.com/UNIQUE-STUDIO/website-templates-GITHUB/tree/main/car-zone-automobile-bootstrap-responsive-web-template' }
     ],
     corporate: [
-        { id: 'corp_1', name: { en: 'Modern Corporate', ru: 'Современный корпоративный' }, price: { en: 'from 9,000 ₽', ru: 'от 9 000 ₽' }, image: '' },
-        { id: 'corp_2', name: { en: 'Elegant Corporate', ru: 'Элегантный корпоративный' }, price: { en: 'from 10,000 ₽', ru: 'от 10 000 ₽' }, image: '' },
-        { id: 'corp_3', name: { en: 'Bold Corporate', ru: 'Смелый корпоративный' }, price: { en: 'from 11,000 ₽', ru: 'от 11 000 ₽' }, image: '' }
+        { id: 'corp_1', category: 'corporate', name: { en: 'Modern Corporate Pro', ru: 'Современный корпоративный Pro' }, price: { en: 'from 9,000 ₽', ru: 'от 9 000 ₽' }, image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=900&q=80' },
+        { id: 'ext__corporate__creative-bee-corporate-free-html5-web-template', category: 'corporate', name: { en: 'Creative Agency', ru: 'Креативное агентство' }, price: { en: 'from 10,000 ₽', ru: 'от 10 000 ₽' }, image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80', preview_url: 'https://github.com/UNIQUE-STUDIO/website-templates-GITHUB/tree/main/creative-bee-corporate-free-html5-web-template' },
+        { id: 'ext__corporate__times-corporate-portfolio-bootstrap-responsive-web-template', category: 'corporate', name: { en: 'Corporate Portfolio', ru: 'Корпоративный портфолио' }, price: { en: 'from 11,000 ₽', ru: 'от 11 000 ₽' }, image: 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=900&q=80', preview_url: 'https://github.com/UNIQUE-STUDIO/website-templates-GITHUB/tree/main/times-corporate-portfolio-bootstrap-responsive-web-template' }
     ]
 };
 
@@ -622,14 +662,18 @@ function renderTemplatesPage() {
     container.innerHTML = allTemplates.map(tmpl => {
         const name = tmpl.name[currentLang] || tmpl.name.en;
         const price = tmpl.price[currentLang] || tmpl.price.en;
-        const imgUrl = customImages.templates[tmpl.id] || '';
+        const imgUrl = customImages.templates[tmpl.id] || tmpl.image || '';
+        const previewUrl = tmpl.preview_url || '';
         const imgHtml = imgUrl ? `<img src="${imgUrl}" alt="${name}" style="width:100%; border-radius:20px;">` : `<div class="template-img" style="height:150px; display:flex; align-items:center; justify-content:center; background:var(--beige); border-radius:20px;">🖼️ ${name}</div>`;
         return `
             <div class="template-card" data-template-id="${tmpl.id}">
                 ${imgHtml}
                 <h3>${escapeHtml(name)}</h3>
                 <div class="template-price">${escapeHtml(price)}</div>
-                <button class="btn order-template-btn" data-template-id="${tmpl.id}" data-template-name="${name}">Order this template</button>
+                <div class="template-actions">
+                    <button class="btn order-template-btn" data-template-id="${tmpl.id}" data-template-name="${name}" data-template-category="${tmpl.category || ''}">Order this template</button>
+                    ${previewUrl ? `<a class="template-preview-btn" href="${previewUrl}" target="_blank" rel="noopener">Preview</a>` : ''}
+                </div>
             </div>
         `;
     }).join('');
@@ -637,9 +681,10 @@ function renderTemplatesPage() {
         btn.addEventListener('click', (e) => {
             const templateId = btn.getAttribute('data-template-id');
             let service = '';
-            if (templateId.startsWith('landing')) service = 'Landing Page';
-            else if (templateId.startsWith('shop')) service = 'Online Store';
-            else if (templateId.startsWith('corp')) service = 'Corporate Website';
+            const cat = (btn.getAttribute('data-template-category') || '').toLowerCase();
+            if (cat === 'landing' || templateId.startsWith('landing')) service = 'Landing Page';
+            else if (cat === 'ecommerce' || templateId.startsWith('shop')) service = 'Online Store';
+            else if (cat === 'corporate' || templateId.startsWith('corp')) service = 'Corporate Website';
             openOrderServiceModal(service, templateId);
         });
     });
@@ -664,7 +709,7 @@ function openOrderServiceModal(serviceName, preselectedTemplateId = null) {
     container.innerHTML = templates.map(tmpl => {
         const name = tmpl.name[currentLang] || tmpl.name.en;
         const price = tmpl.price[currentLang] || tmpl.price.en;
-        const imgUrl = customImages.templates[tmpl.id] || '';
+        const imgUrl = customImages.templates[tmpl.id] || tmpl.image || '';
         const imgHtml = imgUrl ? `<img src="${imgUrl}" alt="${name}" style="width:100%; border-radius:12px;">` : `<div style="height:100px; background:var(--beige); display:flex; align-items:center; justify-content:center;">🖼️</div>`;
         const selectedAttr = (preselectedTemplateId === tmpl.id) ? 'selected' : '';
         return `
@@ -733,10 +778,10 @@ function renderServices() {
     const t = translations[currentLang];
     const services = t.services;
     container.innerHTML = services.map((s, idx) => {
-        let customImg = customImages.services[s.title] || '';
+        let customImg = customImages.services[s.title] || defaultImagePack.services[s.title] || '';
         let imgHtml = '';
         if(customImg && customImg.trim() !== '') {
-            imgHtml = `<img src="${customImg}" alt="${s.title}" style="width:80px; height:80px; object-fit:cover; border-radius:20px;">`;
+            imgHtml = `<img src="${customImg}" alt="${s.title}" style="width:100%; height:180px; object-fit:cover; border-radius:20px;">`;
         } else {
             let svg = serviceSvgs[s.title] || serviceSvgs["Landing Page"];
             imgHtml = `<div class="service-img-svg">${svg}</div>`;
@@ -762,7 +807,7 @@ function renderPortfolio(filter='all', search='') {
     const t = translations[currentLang];
     const filtered = portfolioRaw.filter(item => (filter==='all'||item.category===filter) && (t.portfolio_items[item.ru]||item.ru).toLowerCase().includes(search.toLowerCase()));
     grid.innerHTML = filtered.map(item => {
-        let customImg = customImages.portfolio[item.ru] || '';
+        let customImg = customImages.portfolio[item.ru] || defaultImagePack.portfolio[item.ru] || '';
         let imgHtml = '';
         if(customImg && customImg.trim() !== '') {
             imgHtml = `<img src="${customImg}" alt="${item.ru}" style="width:100%; height:auto; border-radius:20px;">`;
@@ -780,7 +825,7 @@ function renderBlog() {
     const t = translations[currentLang];
     const posts = t.blog_posts;
     grid.innerHTML = posts.map((p, idx) => {
-        let customImg = customImages.blog[idx] || '';
+        let customImg = customImages.blog[idx] || defaultImagePack.blog[idx] || '';
         let imgHtml = '';
         if(customImg && customImg.trim() !== '') {
             imgHtml = `<img src="${customImg}" alt="${p.title}" style="width:100%; height:auto; border-radius:20px;">`;
@@ -1110,10 +1155,12 @@ function attachFormHandler(formId, action, langId, phoneCodeId, phoneInputId) {
         }
         if (formId === 'orderServiceForm') {
             const templateId = document.getElementById('selectedTemplateId').value;
-            if (templateId) {
-                fd.append('template_id', templateId);
-                fd.append('Template Used', templateId);
+            if (!templateId) {
+                alert(currentLang === 'ru' ? 'لطفا یک تمپلیت انتخاب کنید' : 'Please select a template');
+                return;
             }
+            fd.append('template_id', templateId);
+            fd.append('Template Used', templateId);
         }
         const result = await sendToAppsScript(fd, action);
         if (result.success) {
