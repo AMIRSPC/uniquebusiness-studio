@@ -1100,9 +1100,20 @@ function attachFormHandler(formId, action, langId, phoneCodeId, phoneInputId) {
             const fullPhone = getFullPhone(phoneCodeId, phoneInputId);
             if (fullPhone) fd.append('phone', fullPhone);
         }
+        if (formId === 'demoForm') {
+            const category = (document.getElementById('demoCategory')?.value || 'landing').toLowerCase();
+            let templateId = 'landing_1';
+            if (category.includes('ecommerce') || category.includes('shop')) templateId = 'shop_1';
+            else if (category.includes('corp')) templateId = 'corp_1';
+            fd.append('template_id', templateId);
+            fd.append('Template Used', templateId);
+        }
         if (formId === 'orderServiceForm') {
             const templateId = document.getElementById('selectedTemplateId').value;
-            if (templateId) fd.append('template_id', templateId);
+            if (templateId) {
+                fd.append('template_id', templateId);
+                fd.append('Template Used', templateId);
+            }
         }
         const result = await sendToAppsScript(fd, action);
         if (result.success) {
